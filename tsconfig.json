@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "es6",  // Change from 'commonjs' to 'es6' for ES module syntax
+    "outDir": "./elder_proto/dist",
+    "rootDir": "./elder_proto",
+    "strict": true,
+    "moduleResolution": "node",  // Node's module resolution supports ES modules
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "exclude": ["dist"],
+  "include": ["elder_proto/**/*"]
+}
