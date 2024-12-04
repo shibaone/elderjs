@@ -68,7 +68,6 @@ const sendElderCustomTransaction = async (
             elderFee
         );
         console.log("Transaction result:", result);
-        alert("Transaction sent successfully!");
     } catch (error) {
         console.error("Transaction failed:", error);
         alert("Transaction failed. Check console for details.");
