@@ -5,7 +5,7 @@
 // source: elder/router/tx.proto
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
-import { Params } from "./params";
+import { Params } from "./params.js";
 export const protobufPackage = "elder.router";
 function createBaseMsgUpdateParams() {
     return { authority: "", params: undefined };
