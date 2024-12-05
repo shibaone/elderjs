@@ -2,6 +2,7 @@ import { Registry } from "@cosmjs/proto-signing";
 import { MsgSubmitRollTx } from "./elder_proto/dist/router/tx.js";
 import { SigningStargateClient, coins } from "@cosmjs/stargate";
 import { ethers } from "ethers";
+import { chainMap } from "./chains";
 
 const defaultElderFee = {
     amount: coins(500, "uelder"), // Adjust fee and denom
@@ -11,9 +12,7 @@ const defaultElderFee = {
 const customMessageTypeUrl = "/elder.router.MsgSubmitRollTx";
 
 async function getElderClient(elderChainConfig) {
-    const { default: elderChainInfo } = await import(
-        `./chains/${elderChainConfig.chainName}.json`
-    );
+    const elderChainInfo = chainMap.get(elderChainConfig.chainName);
 
     elderChainInfo.rpc = elderChainConfig.rpc;
     elderChainInfo.rest = elderChainConfig.rest;
