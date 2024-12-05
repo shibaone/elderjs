@@ -2,7 +2,7 @@ import { Registry } from "@cosmjs/proto-signing";
 import { MsgSubmitRollTx } from "./elder_proto/dist/router/tx.js";
 import { SigningStargateClient, coins } from "@cosmjs/stargate";
 import { ethers } from "ethers";
-import { chainMap } from "./chains";
+import { chainMap } from "./chains.js";
 
 const defaultElderFee = {
     amount: coins(500, "uelder"), // Adjust fee and denom
