@@ -92,7 +92,7 @@ function hexToBytes(hexString) {
     return bytes;
 }
 
-function getElderMsgAndFee(tx, elderAddress, gasLimit, value, chainId) {
+function getElderMsgAndFee(tx, elderAddress, gasLimit, value, chainId, rollID) {
     delete tx.from;
     tx.nonce = 0;
     tx.gasLimit = gasLimit;
@@ -106,7 +106,7 @@ function getElderMsgAndFee(tx, elderAddress, gasLimit, value, chainId) {
         typeUrl: customMessageTypeUrl,
         value: {
             sender: elderAddress,
-            rollId: 11,
+            rollId: rollID,
             maxFeesGiven: 10000,
             txData: hexToBytes(txBytes),
         },
