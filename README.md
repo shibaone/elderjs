@@ -1,6 +1,6 @@
 # ElderJS
 
-![Version](https://img.shields.io/badge/version-1.0.5-blue)
+![Version](https://img.shields.io/badge/version-1.0.6-blue)
 ![License](https://img.shields.io/badge/license-ISC-lightgrey)
 [![GitHub issues](https://img.shields.io/github/issues/0xElder/elderjs)](https://github.com/0xElder/elderjs/issues)
 
