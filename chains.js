@@ -44,8 +44,72 @@ const devnet1 = {
     features: ["ibc-go"]
 };
 
+const devnet2 = {
+    chainId: "elderdemo",
+    chainName: "elder",
+    rpc: "http://localhost:26657",
+    rest: "http://localhost:1317",
+    bip44: {
+        coinType: 118,
+    },
+    bech32Config: {
+        bech32PrefixAccAddr: "elder",
+        bech32PrefixAccPub: "elder" + "pub",
+        bech32PrefixValAddr: "elder" + "valoper",
+        bech32PrefixValPub: "elder" + "valoperpub",
+        bech32PrefixConsAddr: "elder" + "valcons",
+        bech32PrefixConsPub: "elder" + "valconspub",
+    },
+    currencies: [
+        {
+            coinDenom: "elder",
+            coinMinimalDenom: "uelder",
+            coinDecimals: 6,
+            coinGeckoId: "elder-token",
+        },
+        {
+            coinDenom: "shib",
+            coinMinimalDenom: "shib",
+            coinDecimals: 1,
+            coinGeckoId: "shib-token",
+        },
+    ],
+    feeCurrencies: [
+        {
+            coinDenom: "elder",
+            coinMinimalDenom: "uelder",
+            coinDecimals: 6,
+            coinGeckoId: "elder-token",
+            gasPriceStep: {
+                low: 0.01,
+                average: 0.025,
+                high: 0.04,
+            },
+        },
+        {
+            coinDenom: "shib",
+            coinMinimalDenom: "shib",
+            coinDecimals: 1,
+            coinGeckoId: "shib-token",
+            gasPriceStep: {
+                low: 0.01,
+                average: 0.025,
+                high: 0.04,
+            },
+        },
+    ],
+    stakeCurrency: {
+        coinDenom: "elder",
+        coinMinimalDenom: "uelder",
+        coinDecimals: 6,
+        coinGeckoId: "elder-token",
+    },
+    features: ["ibc-go"]
+}
+
 export const chainMap = new Map([
-    ['devnet-1', devnet1]
+    ['devnet-1', devnet1],
+    ['devnet-2', devnet2],
 ]);
 
 
