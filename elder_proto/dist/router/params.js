@@ -7,18 +7,15 @@
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 export const protobufPackage = "elder.router";
 function createBaseParams() {
-    return { withdrawalPeriod: 0, feeDenom: "", deletePeriod: 0 };
+    return { deletePeriod: 0, withdrawalPeriod: 0 };
 }
 export const Params = {
     encode(message, writer = new BinaryWriter()) {
-        if (message.withdrawalPeriod !== 0) {
-            writer.uint32(8).uint64(message.withdrawalPeriod);
-        }
-        if (message.feeDenom !== "") {
-            writer.uint32(18).string(message.feeDenom);
-        }
         if (message.deletePeriod !== 0) {
-            writer.uint32(24).uint64(message.deletePeriod);
+            writer.uint32(8).uint64(message.deletePeriod);
+        }
+        if (message.withdrawalPeriod !== 0) {
+            writer.uint32(16).uint64(message.withdrawalPeriod);
         }
         return writer;
     },
@@ -33,21 +30,14 @@ export const Params = {
                     if (tag !== 8) {
                         break;
                     }
-                    message.withdrawalPeriod = longToNumber(reader.uint64());
+                    message.deletePeriod = longToNumber(reader.uint64());
                     continue;
                 }
                 case 2: {
-                    if (tag !== 18) {
+                    if (tag !== 16) {
                         break;
                     }
-                    message.feeDenom = reader.string();
-                    continue;
-                }
-                case 3: {
-                    if (tag !== 24) {
-                        break;
-                    }
-                    message.deletePeriod = longToNumber(reader.uint64());
+                    message.withdrawalPeriod = longToNumber(reader.uint64());
                     continue;
                 }
             }
@@ -60,21 +50,17 @@ export const Params = {
     },
     fromJSON(object) {
         return {
-            withdrawalPeriod: isSet(object.withdrawalPeriod) ? globalThis.Number(object.withdrawalPeriod) : 0,
-            feeDenom: isSet(object.feeDenom) ? globalThis.String(object.feeDenom) : "",
             deletePeriod: isSet(object.deletePeriod) ? globalThis.Number(object.deletePeriod) : 0,
+            withdrawalPeriod: isSet(object.withdrawalPeriod) ? globalThis.Number(object.withdrawalPeriod) : 0,
         };
     },
     toJSON(message) {
         const obj = {};
-        if (message.withdrawalPeriod !== 0) {
-            obj.withdrawalPeriod = Math.round(message.withdrawalPeriod);
-        }
-        if (message.feeDenom !== "") {
-            obj.feeDenom = message.feeDenom;
-        }
         if (message.deletePeriod !== 0) {
             obj.deletePeriod = Math.round(message.deletePeriod);
+        }
+        if (message.withdrawalPeriod !== 0) {
+            obj.withdrawalPeriod = Math.round(message.withdrawalPeriod);
         }
         return obj;
     },
@@ -82,11 +68,10 @@ export const Params = {
         return Params.fromPartial(base !== null && base !== void 0 ? base : {});
     },
     fromPartial(object) {
-        var _a, _b, _c;
+        var _a, _b;
         const message = createBaseParams();
-        message.withdrawalPeriod = (_a = object.withdrawalPeriod) !== null && _a !== void 0 ? _a : 0;
-        message.feeDenom = (_b = object.feeDenom) !== null && _b !== void 0 ? _b : "";
-        message.deletePeriod = (_c = object.deletePeriod) !== null && _c !== void 0 ? _c : 0;
+        message.deletePeriod = (_a = object.deletePeriod) !== null && _a !== void 0 ? _a : 0;
+        message.withdrawalPeriod = (_b = object.withdrawalPeriod) !== null && _b !== void 0 ? _b : 0;
         return message;
     },
 };

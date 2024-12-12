@@ -11,25 +11,21 @@ export const protobufPackage = "elder.router";
 
 /** Params defines the parameters for the module. */
 export interface Params {
-  withdrawalPeriod: number;
-  feeDenom: string;
   deletePeriod: number;
+  withdrawalPeriod: number;
 }
 
 function createBaseParams(): Params {
-  return { withdrawalPeriod: 0, feeDenom: "", deletePeriod: 0 };
+  return { deletePeriod: 0, withdrawalPeriod: 0 };
 }
 
 export const Params: MessageFns<Params> = {
   encode(message: Params, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.withdrawalPeriod !== 0) {
-      writer.uint32(8).uint64(message.withdrawalPeriod);
-    }
-    if (message.feeDenom !== "") {
-      writer.uint32(18).string(message.feeDenom);
-    }
     if (message.deletePeriod !== 0) {
-      writer.uint32(24).uint64(message.deletePeriod);
+      writer.uint32(8).uint64(message.deletePeriod);
+    }
+    if (message.withdrawalPeriod !== 0) {
+      writer.uint32(16).uint64(message.withdrawalPeriod);
     }
     return writer;
   },
@@ -46,23 +42,15 @@ export const Params: MessageFns<Params> = {
             break;
           }
 
-          message.withdrawalPeriod = longToNumber(reader.uint64());
+          message.deletePeriod = longToNumber(reader.uint64());
           continue;
         }
         case 2: {
-          if (tag !== 18) {
+          if (tag !== 16) {
             break;
           }
 
-          message.feeDenom = reader.string();
-          continue;
-        }
-        case 3: {
-          if (tag !== 24) {
-            break;
-          }
-
-          message.deletePeriod = longToNumber(reader.uint64());
+          message.withdrawalPeriod = longToNumber(reader.uint64());
           continue;
         }
       }
@@ -76,22 +64,18 @@ export const Params: MessageFns<Params> = {
 
   fromJSON(object: any): Params {
     return {
-      withdrawalPeriod: isSet(object.withdrawalPeriod) ? globalThis.Number(object.withdrawalPeriod) : 0,
-      feeDenom: isSet(object.feeDenom) ? globalThis.String(object.feeDenom) : "",
       deletePeriod: isSet(object.deletePeriod) ? globalThis.Number(object.deletePeriod) : 0,
+      withdrawalPeriod: isSet(object.withdrawalPeriod) ? globalThis.Number(object.withdrawalPeriod) : 0,
     };
   },
 
   toJSON(message: Params): unknown {
     const obj: any = {};
-    if (message.withdrawalPeriod !== 0) {
-      obj.withdrawalPeriod = Math.round(message.withdrawalPeriod);
-    }
-    if (message.feeDenom !== "") {
-      obj.feeDenom = message.feeDenom;
-    }
     if (message.deletePeriod !== 0) {
       obj.deletePeriod = Math.round(message.deletePeriod);
+    }
+    if (message.withdrawalPeriod !== 0) {
+      obj.withdrawalPeriod = Math.round(message.withdrawalPeriod);
     }
     return obj;
   },
@@ -101,9 +85,8 @@ export const Params: MessageFns<Params> = {
   },
   fromPartial<I extends Exact<DeepPartial<Params>, I>>(object: I): Params {
     const message = createBaseParams();
-    message.withdrawalPeriod = object.withdrawalPeriod ?? 0;
-    message.feeDenom = object.feeDenom ?? "";
     message.deletePeriod = object.deletePeriod ?? 0;
+    message.withdrawalPeriod = object.withdrawalPeriod ?? 0;
     return message;
   },
 };

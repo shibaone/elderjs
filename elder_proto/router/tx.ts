@@ -31,7 +31,6 @@ export interface MsgUpdateParamsResponse {
 export interface MsgSubmitRollTx {
   sender: string;
   rollId: number;
-  maxFeesGiven: number;
   txData: Uint8Array;
 }
 
@@ -169,7 +168,7 @@ export const MsgUpdateParamsResponse: MessageFns<MsgUpdateParamsResponse> = {
 };
 
 function createBaseMsgSubmitRollTx(): MsgSubmitRollTx {
-  return { sender: "", rollId: 0, maxFeesGiven: 0, txData: new Uint8Array(0) };
+  return { sender: "", rollId: 0, txData: new Uint8Array(0) };
 }
 
 export const MsgSubmitRollTx: MessageFns<MsgSubmitRollTx> = {
@@ -180,11 +179,8 @@ export const MsgSubmitRollTx: MessageFns<MsgSubmitRollTx> = {
     if (message.rollId !== 0) {
       writer.uint32(16).uint64(message.rollId);
     }
-    if (message.maxFeesGiven !== 0) {
-      writer.uint32(24).uint64(message.maxFeesGiven);
-    }
     if (message.txData.length !== 0) {
-      writer.uint32(34).bytes(message.txData);
+      writer.uint32(26).bytes(message.txData);
     }
     return writer;
   },
@@ -213,15 +209,7 @@ export const MsgSubmitRollTx: MessageFns<MsgSubmitRollTx> = {
           continue;
         }
         case 3: {
-          if (tag !== 24) {
-            break;
-          }
-
-          message.maxFeesGiven = longToNumber(reader.uint64());
-          continue;
-        }
-        case 4: {
-          if (tag !== 34) {
+          if (tag !== 26) {
             break;
           }
 
@@ -241,7 +229,6 @@ export const MsgSubmitRollTx: MessageFns<MsgSubmitRollTx> = {
     return {
       sender: isSet(object.sender) ? globalThis.String(object.sender) : "",
       rollId: isSet(object.rollId) ? globalThis.Number(object.rollId) : 0,
-      maxFeesGiven: isSet(object.maxFeesGiven) ? globalThis.Number(object.maxFeesGiven) : 0,
       txData: isSet(object.txData) ? bytesFromBase64(object.txData) : new Uint8Array(0),
     };
   },
@@ -253,9 +240,6 @@ export const MsgSubmitRollTx: MessageFns<MsgSubmitRollTx> = {
     }
     if (message.rollId !== 0) {
       obj.rollId = Math.round(message.rollId);
-    }
-    if (message.maxFeesGiven !== 0) {
-      obj.maxFeesGiven = Math.round(message.maxFeesGiven);
     }
     if (message.txData.length !== 0) {
       obj.txData = base64FromBytes(message.txData);
@@ -270,7 +254,6 @@ export const MsgSubmitRollTx: MessageFns<MsgSubmitRollTx> = {
     const message = createBaseMsgSubmitRollTx();
     message.sender = object.sender ?? "";
     message.rollId = object.rollId ?? 0;
-    message.maxFeesGiven = object.maxFeesGiven ?? 0;
     message.txData = object.txData ?? new Uint8Array(0);
     return message;
   },

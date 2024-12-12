@@ -107,7 +107,6 @@ function getElderMsgAndFee(tx, elderAddress, gasLimit, value, chainId, rollID) {
         value: {
             sender: elderAddress,
             rollId: rollID,
-            maxFeesGiven: 10000,
             txData: hexToBytes(txBytes),
         },
     };

@@ -5,7 +5,7 @@
 // source: elder/router/tx.proto
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
-import { Params } from "./params.js";
+import { Params } from "./params";
 export const protobufPackage = "elder.router";
 function createBaseMsgUpdateParams() {
     return { authority: "", params: undefined };
@@ -116,7 +116,7 @@ export const MsgUpdateParamsResponse = {
     },
 };
 function createBaseMsgSubmitRollTx() {
-    return { sender: "", rollId: 0, maxFeesGiven: 0, txData: new Uint8Array(0) };
+    return { sender: "", rollId: 0, txData: new Uint8Array(0) };
 }
 export const MsgSubmitRollTx = {
     encode(message, writer = new BinaryWriter()) {
@@ -126,11 +126,8 @@ export const MsgSubmitRollTx = {
         if (message.rollId !== 0) {
             writer.uint32(16).uint64(message.rollId);
         }
-        if (message.maxFeesGiven !== 0) {
-            writer.uint32(24).uint64(message.maxFeesGiven);
-        }
         if (message.txData.length !== 0) {
-            writer.uint32(34).bytes(message.txData);
+            writer.uint32(26).bytes(message.txData);
         }
         return writer;
     },
@@ -156,14 +153,7 @@ export const MsgSubmitRollTx = {
                     continue;
                 }
                 case 3: {
-                    if (tag !== 24) {
-                        break;
-                    }
-                    message.maxFeesGiven = longToNumber(reader.uint64());
-                    continue;
-                }
-                case 4: {
-                    if (tag !== 34) {
+                    if (tag !== 26) {
                         break;
                     }
                     message.txData = reader.bytes();
@@ -181,7 +171,6 @@ export const MsgSubmitRollTx = {
         return {
             sender: isSet(object.sender) ? globalThis.String(object.sender) : "",
             rollId: isSet(object.rollId) ? globalThis.Number(object.rollId) : 0,
-            maxFeesGiven: isSet(object.maxFeesGiven) ? globalThis.Number(object.maxFeesGiven) : 0,
             txData: isSet(object.txData) ? bytesFromBase64(object.txData) : new Uint8Array(0),
         };
     },
@@ -193,9 +182,6 @@ export const MsgSubmitRollTx = {
         if (message.rollId !== 0) {
             obj.rollId = Math.round(message.rollId);
         }
-        if (message.maxFeesGiven !== 0) {
-            obj.maxFeesGiven = Math.round(message.maxFeesGiven);
-        }
         if (message.txData.length !== 0) {
             obj.txData = base64FromBytes(message.txData);
         }
@@ -205,12 +191,11 @@ export const MsgSubmitRollTx = {
         return MsgSubmitRollTx.fromPartial(base !== null && base !== void 0 ? base : {});
     },
     fromPartial(object) {
-        var _a, _b, _c, _d;
+        var _a, _b, _c;
         const message = createBaseMsgSubmitRollTx();
         message.sender = (_a = object.sender) !== null && _a !== void 0 ? _a : "";
         message.rollId = (_b = object.rollId) !== null && _b !== void 0 ? _b : 0;
-        message.maxFeesGiven = (_c = object.maxFeesGiven) !== null && _c !== void 0 ? _c : 0;
-        message.txData = (_d = object.txData) !== null && _d !== void 0 ? _d : new Uint8Array(0);
+        message.txData = (_c = object.txData) !== null && _c !== void 0 ? _c : new Uint8Array(0);
         return message;
     },
 };
