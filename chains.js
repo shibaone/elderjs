@@ -81,9 +81,9 @@ const devnet2 = {
             coinDecimals: 6,
             coinGeckoId: "elder-token",
             gasPriceStep: {
-                low: 0.01,
-                average: 0.025,
-                high: 0.04,
+                low: 1,
+                average: 1.25,
+                high: 1.5,
             },
         },
         {
@@ -92,9 +92,9 @@ const devnet2 = {
             coinDecimals: 1,
             coinGeckoId: "shib-token",
             gasPriceStep: {
-                low: 0.01,
-                average: 0.025,
-                high: 0.04,
+                low: 0.5,
+                average: 1,
+                high: 1.5,
             },
         },
     ],
