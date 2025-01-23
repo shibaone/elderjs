@@ -32,18 +32,11 @@ export interface MsgSubmitRollTx {
   sender: string;
   rollId: number;
   txData: Uint8Array;
+  accNum: number;
 }
 
 export interface MsgSubmitRollTxResponse {
   result: boolean;
-}
-
-export interface MsgWithdrawFee {
-  sender: string;
-  rollId: number;
-}
-
-export interface MsgWithdrawFeeResponse {
 }
 
 function createBaseMsgUpdateParams(): MsgUpdateParams {
@@ -168,7 +161,7 @@ export const MsgUpdateParamsResponse: MessageFns<MsgUpdateParamsResponse> = {
 };
 
 function createBaseMsgSubmitRollTx(): MsgSubmitRollTx {
-  return { sender: "", rollId: 0, txData: new Uint8Array(0) };
+  return { sender: "", rollId: 0, txData: new Uint8Array(0), accNum: 0 };
 }
 
 export const MsgSubmitRollTx: MessageFns<MsgSubmitRollTx> = {
@@ -181,6 +174,9 @@ export const MsgSubmitRollTx: MessageFns<MsgSubmitRollTx> = {
     }
     if (message.txData.length !== 0) {
       writer.uint32(26).bytes(message.txData);
+    }
+    if (message.accNum !== 0) {
+      writer.uint32(32).uint64(message.accNum);
     }
     return writer;
   },
@@ -216,6 +212,14 @@ export const MsgSubmitRollTx: MessageFns<MsgSubmitRollTx> = {
           message.txData = reader.bytes();
           continue;
         }
+        case 4: {
+          if (tag !== 32) {
+            break;
+          }
+
+          message.accNum = longToNumber(reader.uint64());
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -230,6 +234,7 @@ export const MsgSubmitRollTx: MessageFns<MsgSubmitRollTx> = {
       sender: isSet(object.sender) ? globalThis.String(object.sender) : "",
       rollId: isSet(object.rollId) ? globalThis.Number(object.rollId) : 0,
       txData: isSet(object.txData) ? bytesFromBase64(object.txData) : new Uint8Array(0),
+      accNum: isSet(object.accNum) ? globalThis.Number(object.accNum) : 0,
     };
   },
 
@@ -244,6 +249,9 @@ export const MsgSubmitRollTx: MessageFns<MsgSubmitRollTx> = {
     if (message.txData.length !== 0) {
       obj.txData = base64FromBytes(message.txData);
     }
+    if (message.accNum !== 0) {
+      obj.accNum = Math.round(message.accNum);
+    }
     return obj;
   },
 
@@ -255,6 +263,7 @@ export const MsgSubmitRollTx: MessageFns<MsgSubmitRollTx> = {
     message.sender = object.sender ?? "";
     message.rollId = object.rollId ?? 0;
     message.txData = object.txData ?? new Uint8Array(0);
+    message.accNum = object.accNum ?? 0;
     return message;
   },
 };
@@ -317,125 +326,6 @@ export const MsgSubmitRollTxResponse: MessageFns<MsgSubmitRollTxResponse> = {
   },
 };
 
-function createBaseMsgWithdrawFee(): MsgWithdrawFee {
-  return { sender: "", rollId: 0 };
-}
-
-export const MsgWithdrawFee: MessageFns<MsgWithdrawFee> = {
-  encode(message: MsgWithdrawFee, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.sender !== "") {
-      writer.uint32(10).string(message.sender);
-    }
-    if (message.rollId !== 0) {
-      writer.uint32(16).uint64(message.rollId);
-    }
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): MsgWithdrawFee {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseMsgWithdrawFee();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 10) {
-            break;
-          }
-
-          message.sender = reader.string();
-          continue;
-        }
-        case 2: {
-          if (tag !== 16) {
-            break;
-          }
-
-          message.rollId = longToNumber(reader.uint64());
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): MsgWithdrawFee {
-    return {
-      sender: isSet(object.sender) ? globalThis.String(object.sender) : "",
-      rollId: isSet(object.rollId) ? globalThis.Number(object.rollId) : 0,
-    };
-  },
-
-  toJSON(message: MsgWithdrawFee): unknown {
-    const obj: any = {};
-    if (message.sender !== "") {
-      obj.sender = message.sender;
-    }
-    if (message.rollId !== 0) {
-      obj.rollId = Math.round(message.rollId);
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<MsgWithdrawFee>, I>>(base?: I): MsgWithdrawFee {
-    return MsgWithdrawFee.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<MsgWithdrawFee>, I>>(object: I): MsgWithdrawFee {
-    const message = createBaseMsgWithdrawFee();
-    message.sender = object.sender ?? "";
-    message.rollId = object.rollId ?? 0;
-    return message;
-  },
-};
-
-function createBaseMsgWithdrawFeeResponse(): MsgWithdrawFeeResponse {
-  return {};
-}
-
-export const MsgWithdrawFeeResponse: MessageFns<MsgWithdrawFeeResponse> = {
-  encode(_: MsgWithdrawFeeResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): MsgWithdrawFeeResponse {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseMsgWithdrawFeeResponse();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(_: any): MsgWithdrawFeeResponse {
-    return {};
-  },
-
-  toJSON(_: MsgWithdrawFeeResponse): unknown {
-    const obj: any = {};
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<MsgWithdrawFeeResponse>, I>>(base?: I): MsgWithdrawFeeResponse {
-    return MsgWithdrawFeeResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<MsgWithdrawFeeResponse>, I>>(_: I): MsgWithdrawFeeResponse {
-    const message = createBaseMsgWithdrawFeeResponse();
-    return message;
-  },
-};
-
 /** Msg defines the Msg service. */
 export interface Msg {
   /**
@@ -444,7 +334,6 @@ export interface Msg {
    */
   UpdateParams(request: MsgUpdateParams): Promise<MsgUpdateParamsResponse>;
   SubmitRollTx(request: MsgSubmitRollTx): Promise<MsgSubmitRollTxResponse>;
-  WithdrawFee(request: MsgWithdrawFee): Promise<MsgWithdrawFeeResponse>;
 }
 
 export const MsgServiceName = "elder.router.Msg";
@@ -456,7 +345,6 @@ export class MsgClientImpl implements Msg {
     this.rpc = rpc;
     this.UpdateParams = this.UpdateParams.bind(this);
     this.SubmitRollTx = this.SubmitRollTx.bind(this);
-    this.WithdrawFee = this.WithdrawFee.bind(this);
   }
   UpdateParams(request: MsgUpdateParams): Promise<MsgUpdateParamsResponse> {
     const data = MsgUpdateParams.encode(request).finish();
@@ -468,12 +356,6 @@ export class MsgClientImpl implements Msg {
     const data = MsgSubmitRollTx.encode(request).finish();
     const promise = this.rpc.request(this.service, "SubmitRollTx", data);
     return promise.then((data) => MsgSubmitRollTxResponse.decode(new BinaryReader(data)));
-  }
-
-  WithdrawFee(request: MsgWithdrawFee): Promise<MsgWithdrawFeeResponse> {
-    const data = MsgWithdrawFee.encode(request).finish();
-    const promise = this.rpc.request(this.service, "WithdrawFee", data);
-    return promise.then((data) => MsgWithdrawFeeResponse.decode(new BinaryReader(data)));
   }
 }
 

@@ -116,7 +116,7 @@ export const MsgUpdateParamsResponse = {
     },
 };
 function createBaseMsgSubmitRollTx() {
-    return { sender: "", rollId: 0, txData: new Uint8Array(0) };
+    return { sender: "", rollId: 0, txData: new Uint8Array(0), accNum: 0 };
 }
 export const MsgSubmitRollTx = {
     encode(message, writer = new BinaryWriter()) {
@@ -128,6 +128,9 @@ export const MsgSubmitRollTx = {
         }
         if (message.txData.length !== 0) {
             writer.uint32(26).bytes(message.txData);
+        }
+        if (message.accNum !== 0) {
+            writer.uint32(32).uint64(message.accNum);
         }
         return writer;
     },
@@ -159,6 +162,13 @@ export const MsgSubmitRollTx = {
                     message.txData = reader.bytes();
                     continue;
                 }
+                case 4: {
+                    if (tag !== 32) {
+                        break;
+                    }
+                    message.accNum = longToNumber(reader.uint64());
+                    continue;
+                }
             }
             if ((tag & 7) === 4 || tag === 0) {
                 break;
@@ -172,6 +182,7 @@ export const MsgSubmitRollTx = {
             sender: isSet(object.sender) ? globalThis.String(object.sender) : "",
             rollId: isSet(object.rollId) ? globalThis.Number(object.rollId) : 0,
             txData: isSet(object.txData) ? bytesFromBase64(object.txData) : new Uint8Array(0),
+            accNum: isSet(object.accNum) ? globalThis.Number(object.accNum) : 0,
         };
     },
     toJSON(message) {
@@ -185,17 +196,21 @@ export const MsgSubmitRollTx = {
         if (message.txData.length !== 0) {
             obj.txData = base64FromBytes(message.txData);
         }
+        if (message.accNum !== 0) {
+            obj.accNum = Math.round(message.accNum);
+        }
         return obj;
     },
     create(base) {
         return MsgSubmitRollTx.fromPartial(base !== null && base !== void 0 ? base : {});
     },
     fromPartial(object) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d;
         const message = createBaseMsgSubmitRollTx();
         message.sender = (_a = object.sender) !== null && _a !== void 0 ? _a : "";
         message.rollId = (_b = object.rollId) !== null && _b !== void 0 ? _b : 0;
         message.txData = (_c = object.txData) !== null && _c !== void 0 ? _c : new Uint8Array(0);
+        message.accNum = (_d = object.accNum) !== null && _d !== void 0 ? _d : 0;
         return message;
     },
 };
@@ -251,112 +266,6 @@ export const MsgSubmitRollTxResponse = {
         return message;
     },
 };
-function createBaseMsgWithdrawFee() {
-    return { sender: "", rollId: 0 };
-}
-export const MsgWithdrawFee = {
-    encode(message, writer = new BinaryWriter()) {
-        if (message.sender !== "") {
-            writer.uint32(10).string(message.sender);
-        }
-        if (message.rollId !== 0) {
-            writer.uint32(16).uint64(message.rollId);
-        }
-        return writer;
-    },
-    decode(input, length) {
-        const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-        let end = length === undefined ? reader.len : reader.pos + length;
-        const message = createBaseMsgWithdrawFee();
-        while (reader.pos < end) {
-            const tag = reader.uint32();
-            switch (tag >>> 3) {
-                case 1: {
-                    if (tag !== 10) {
-                        break;
-                    }
-                    message.sender = reader.string();
-                    continue;
-                }
-                case 2: {
-                    if (tag !== 16) {
-                        break;
-                    }
-                    message.rollId = longToNumber(reader.uint64());
-                    continue;
-                }
-            }
-            if ((tag & 7) === 4 || tag === 0) {
-                break;
-            }
-            reader.skip(tag & 7);
-        }
-        return message;
-    },
-    fromJSON(object) {
-        return {
-            sender: isSet(object.sender) ? globalThis.String(object.sender) : "",
-            rollId: isSet(object.rollId) ? globalThis.Number(object.rollId) : 0,
-        };
-    },
-    toJSON(message) {
-        const obj = {};
-        if (message.sender !== "") {
-            obj.sender = message.sender;
-        }
-        if (message.rollId !== 0) {
-            obj.rollId = Math.round(message.rollId);
-        }
-        return obj;
-    },
-    create(base) {
-        return MsgWithdrawFee.fromPartial(base !== null && base !== void 0 ? base : {});
-    },
-    fromPartial(object) {
-        var _a, _b;
-        const message = createBaseMsgWithdrawFee();
-        message.sender = (_a = object.sender) !== null && _a !== void 0 ? _a : "";
-        message.rollId = (_b = object.rollId) !== null && _b !== void 0 ? _b : 0;
-        return message;
-    },
-};
-function createBaseMsgWithdrawFeeResponse() {
-    return {};
-}
-export const MsgWithdrawFeeResponse = {
-    encode(_, writer = new BinaryWriter()) {
-        return writer;
-    },
-    decode(input, length) {
-        const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-        let end = length === undefined ? reader.len : reader.pos + length;
-        const message = createBaseMsgWithdrawFeeResponse();
-        while (reader.pos < end) {
-            const tag = reader.uint32();
-            switch (tag >>> 3) {
-            }
-            if ((tag & 7) === 4 || tag === 0) {
-                break;
-            }
-            reader.skip(tag & 7);
-        }
-        return message;
-    },
-    fromJSON(_) {
-        return {};
-    },
-    toJSON(_) {
-        const obj = {};
-        return obj;
-    },
-    create(base) {
-        return MsgWithdrawFeeResponse.fromPartial(base !== null && base !== void 0 ? base : {});
-    },
-    fromPartial(_) {
-        const message = createBaseMsgWithdrawFeeResponse();
-        return message;
-    },
-};
 export const MsgServiceName = "elder.router.Msg";
 export class MsgClientImpl {
     constructor(rpc, opts) {
@@ -364,7 +273,6 @@ export class MsgClientImpl {
         this.rpc = rpc;
         this.UpdateParams = this.UpdateParams.bind(this);
         this.SubmitRollTx = this.SubmitRollTx.bind(this);
-        this.WithdrawFee = this.WithdrawFee.bind(this);
     }
     UpdateParams(request) {
         const data = MsgUpdateParams.encode(request).finish();
@@ -375,11 +283,6 @@ export class MsgClientImpl {
         const data = MsgSubmitRollTx.encode(request).finish();
         const promise = this.rpc.request(this.service, "SubmitRollTx", data);
         return promise.then((data) => MsgSubmitRollTxResponse.decode(new BinaryReader(data)));
-    }
-    WithdrawFee(request) {
-        const data = MsgWithdrawFee.encode(request).finish();
-        const promise = this.rpc.request(this.service, "WithdrawFee", data);
-        return promise.then((data) => MsgWithdrawFeeResponse.decode(new BinaryReader(data)));
     }
 }
 function bytesFromBase64(b64) {

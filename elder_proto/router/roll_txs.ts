@@ -84,7 +84,7 @@ function createBaseQueryRollTxList(): QueryRollTxList {
 export const QueryRollTxList: MessageFns<QueryRollTxList> = {
   encode(message: QueryRollTxList, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.block !== 0) {
-      writer.uint32(8).int64(message.block);
+      writer.uint32(8).uint64(message.block);
     }
     for (const v of message.txList) {
       writer.uint32(18).bytes(v!);
@@ -104,7 +104,7 @@ export const QueryRollTxList: MessageFns<QueryRollTxList> = {
             break;
           }
 
-          message.block = longToNumber(reader.int64());
+          message.block = longToNumber(reader.uint64());
           continue;
         }
         case 2: {
