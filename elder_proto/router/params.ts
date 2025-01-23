@@ -12,20 +12,16 @@ export const protobufPackage = "elder.router";
 /** Params defines the parameters for the module. */
 export interface Params {
   deletePeriod: number;
-  withdrawalPeriod: number;
 }
 
 function createBaseParams(): Params {
-  return { deletePeriod: 0, withdrawalPeriod: 0 };
+  return { deletePeriod: 0 };
 }
 
 export const Params: MessageFns<Params> = {
   encode(message: Params, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.deletePeriod !== 0) {
       writer.uint32(8).uint64(message.deletePeriod);
-    }
-    if (message.withdrawalPeriod !== 0) {
-      writer.uint32(16).uint64(message.withdrawalPeriod);
     }
     return writer;
   },
@@ -45,14 +41,6 @@ export const Params: MessageFns<Params> = {
           message.deletePeriod = longToNumber(reader.uint64());
           continue;
         }
-        case 2: {
-          if (tag !== 16) {
-            break;
-          }
-
-          message.withdrawalPeriod = longToNumber(reader.uint64());
-          continue;
-        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -63,19 +51,13 @@ export const Params: MessageFns<Params> = {
   },
 
   fromJSON(object: any): Params {
-    return {
-      deletePeriod: isSet(object.deletePeriod) ? globalThis.Number(object.deletePeriod) : 0,
-      withdrawalPeriod: isSet(object.withdrawalPeriod) ? globalThis.Number(object.withdrawalPeriod) : 0,
-    };
+    return { deletePeriod: isSet(object.deletePeriod) ? globalThis.Number(object.deletePeriod) : 0 };
   },
 
   toJSON(message: Params): unknown {
     const obj: any = {};
     if (message.deletePeriod !== 0) {
       obj.deletePeriod = Math.round(message.deletePeriod);
-    }
-    if (message.withdrawalPeriod !== 0) {
-      obj.withdrawalPeriod = Math.round(message.withdrawalPeriod);
     }
     return obj;
   },
@@ -86,7 +68,6 @@ export const Params: MessageFns<Params> = {
   fromPartial<I extends Exact<DeepPartial<Params>, I>>(object: I): Params {
     const message = createBaseParams();
     message.deletePeriod = object.deletePeriod ?? 0;
-    message.withdrawalPeriod = object.withdrawalPeriod ?? 0;
     return message;
   },
 };

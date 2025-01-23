@@ -65,7 +65,7 @@ function createBaseQueryRollTxList() {
 export const QueryRollTxList = {
     encode(message, writer = new BinaryWriter()) {
         if (message.block !== 0) {
-            writer.uint32(8).int64(message.block);
+            writer.uint32(8).uint64(message.block);
         }
         for (const v of message.txList) {
             writer.uint32(18).bytes(v);
@@ -83,7 +83,7 @@ export const QueryRollTxList = {
                     if (tag !== 8) {
                         break;
                     }
-                    message.block = longToNumber(reader.int64());
+                    message.block = longToNumber(reader.uint64());
                     continue;
                 }
                 case 2: {

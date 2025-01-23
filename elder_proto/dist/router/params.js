@@ -7,15 +7,12 @@
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 export const protobufPackage = "elder.router";
 function createBaseParams() {
-    return { deletePeriod: 0, withdrawalPeriod: 0 };
+    return { deletePeriod: 0 };
 }
 export const Params = {
     encode(message, writer = new BinaryWriter()) {
         if (message.deletePeriod !== 0) {
             writer.uint32(8).uint64(message.deletePeriod);
-        }
-        if (message.withdrawalPeriod !== 0) {
-            writer.uint32(16).uint64(message.withdrawalPeriod);
         }
         return writer;
     },
@@ -33,13 +30,6 @@ export const Params = {
                     message.deletePeriod = longToNumber(reader.uint64());
                     continue;
                 }
-                case 2: {
-                    if (tag !== 16) {
-                        break;
-                    }
-                    message.withdrawalPeriod = longToNumber(reader.uint64());
-                    continue;
-                }
             }
             if ((tag & 7) === 4 || tag === 0) {
                 break;
@@ -49,18 +39,12 @@ export const Params = {
         return message;
     },
     fromJSON(object) {
-        return {
-            deletePeriod: isSet(object.deletePeriod) ? globalThis.Number(object.deletePeriod) : 0,
-            withdrawalPeriod: isSet(object.withdrawalPeriod) ? globalThis.Number(object.withdrawalPeriod) : 0,
-        };
+        return { deletePeriod: isSet(object.deletePeriod) ? globalThis.Number(object.deletePeriod) : 0 };
     },
     toJSON(message) {
         const obj = {};
         if (message.deletePeriod !== 0) {
             obj.deletePeriod = Math.round(message.deletePeriod);
-        }
-        if (message.withdrawalPeriod !== 0) {
-            obj.withdrawalPeriod = Math.round(message.withdrawalPeriod);
         }
         return obj;
     },
@@ -68,10 +52,9 @@ export const Params = {
         return Params.fromPartial(base !== null && base !== void 0 ? base : {});
     },
     fromPartial(object) {
-        var _a, _b;
+        var _a;
         const message = createBaseParams();
         message.deletePeriod = (_a = object.deletePeriod) !== null && _a !== void 0 ? _a : 0;
-        message.withdrawalPeriod = (_b = object.withdrawalPeriod) !== null && _b !== void 0 ? _b : 0;
         return message;
     },
 };

@@ -157,10 +157,10 @@ export const QueryTxListRequest: MessageFns<QueryTxListRequest> = {
       writer.uint32(8).uint64(message.rollId);
     }
     if (message.startBlock !== 0) {
-      writer.uint32(16).int64(message.startBlock);
+      writer.uint32(16).uint64(message.startBlock);
     }
     if (message.endBlock !== 0) {
-      writer.uint32(24).int64(message.endBlock);
+      writer.uint32(24).uint64(message.endBlock);
     }
     return writer;
   },
@@ -185,7 +185,7 @@ export const QueryTxListRequest: MessageFns<QueryTxListRequest> = {
             break;
           }
 
-          message.startBlock = longToNumber(reader.int64());
+          message.startBlock = longToNumber(reader.uint64());
           continue;
         }
         case 3: {
@@ -193,7 +193,7 @@ export const QueryTxListRequest: MessageFns<QueryTxListRequest> = {
             break;
           }
 
-          message.endBlock = longToNumber(reader.int64());
+          message.endBlock = longToNumber(reader.uint64());
           continue;
         }
       }
@@ -252,7 +252,7 @@ export const QueryTxListResponse: MessageFns<QueryTxListResponse> = {
       QueryRollTxList.encode(v!, writer.uint32(18).fork()).join();
     }
     if (message.currentHeight !== 0) {
-      writer.uint32(24).int64(message.currentHeight);
+      writer.uint32(24).uint64(message.currentHeight);
     }
     return writer;
   },
@@ -285,7 +285,7 @@ export const QueryTxListResponse: MessageFns<QueryTxListResponse> = {
             break;
           }
 
-          message.currentHeight = longToNumber(reader.int64());
+          message.currentHeight = longToNumber(reader.uint64());
           continue;
         }
       }
@@ -341,7 +341,7 @@ export const QueryTxsByBlockRequest: MessageFns<QueryTxsByBlockRequest> = {
       writer.uint32(8).uint64(message.rollId);
     }
     if (message.block !== 0) {
-      writer.uint32(16).int64(message.block);
+      writer.uint32(16).uint64(message.block);
     }
     return writer;
   },
@@ -366,7 +366,7 @@ export const QueryTxsByBlockRequest: MessageFns<QueryTxsByBlockRequest> = {
             break;
           }
 
-          message.block = longToNumber(reader.int64());
+          message.block = longToNumber(reader.uint64());
           continue;
         }
       }
@@ -420,7 +420,7 @@ export const QueryTxsByBlockResponse: MessageFns<QueryTxsByBlockResponse> = {
       QueryRollTxList.encode(message.txs, writer.uint32(18).fork()).join();
     }
     if (message.currentHeight !== 0) {
-      writer.uint32(24).int64(message.currentHeight);
+      writer.uint32(24).uint64(message.currentHeight);
     }
     return writer;
   },
@@ -453,7 +453,7 @@ export const QueryTxsByBlockResponse: MessageFns<QueryTxsByBlockResponse> = {
             break;
           }
 
-          message.currentHeight = longToNumber(reader.int64());
+          message.currentHeight = longToNumber(reader.uint64());
           continue;
         }
       }
