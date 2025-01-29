@@ -29,6 +29,7 @@ async function getElderClient(elderChainConfig) {
         const offlineSigner = window.getOfflineSigner(elderChainInfo.chainId);
         const accounts = await offlineSigner.getAccounts();
         let elderAddress = accounts[0].address;
+        let elderAccountNumber = accounts[0].accountNumber;
 
         const registry = new Registry();
         registry.register("/elder.router.MsgSubmitRollTx", MsgSubmitRollTx);
@@ -40,7 +41,7 @@ async function getElderClient(elderChainConfig) {
         );
 
         let elderClient = stargateClient;
-        return { elderAddress, elderClient };
+        return { elderAddress, elderClient, elderAccountNumber };
     } catch (error) {
         console.error("Failed to connect wallet:", error);
         alert("Failed to connect wallet.");
@@ -92,7 +93,7 @@ function hexToBytes(hexString) {
     return bytes;
 }
 
-function getElderMsgAndFee(tx, elderAddress, gasLimit, value, chainId, rollID) {
+function getElderMsgAndFee(tx, elderAddress, gasLimit, value, chainId, rollID, accNum) {
     delete tx.from;
     tx.nonce = 0;
     tx.gasLimit = gasLimit;
@@ -108,6 +109,7 @@ function getElderMsgAndFee(tx, elderAddress, gasLimit, value, chainId, rollID) {
             sender: elderAddress,
             rollId: rollID,
             txData: hexToBytes(txBytes),
+            accNum: accNum,
         },
     };
 
