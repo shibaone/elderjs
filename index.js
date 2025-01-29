@@ -11,6 +11,14 @@ const defaultElderFee = {
 
 const customMessageTypeUrl = "/elder.router.MsgSubmitRollTx";
 
+async function getAccountNumber(restEndpoint, offlineSigner, elderAddress) {
+    const client = await SigningStargateClient.connectWithSigner(restEndpoint, offlineSigner);
+
+    // Fetch account info
+    const accountInfo = await client.getAccount(elderAddress);
+    return accountInfo.accountNumber;
+}
+
 async function getElderClient(elderChainConfig) {
     const elderChainInfo = chainMap.get(elderChainConfig.chainName);
 
@@ -30,6 +38,8 @@ async function getElderClient(elderChainConfig) {
         const accounts = await offlineSigner.getAccounts();
         let elderAddress = accounts[0].address;
         let elderAccountNumber = accounts[0].accountNumber;
+
+        elderAccountNumber = await getAccountNumber(elderChainInfo.rpc, offlineSigner, elderAddress);
 
         const registry = new Registry();
         registry.register("/elder.router.MsgSubmitRollTx", MsgSubmitRollTx);
