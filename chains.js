@@ -45,7 +45,7 @@ const devnet1 = {
 };
 
 const devnet2 = {
-    chainId: "elderdemo",
+    chainId: "elder_dev2",
     chainName: "elder",
     rpc: "http://localhost:26657",
     rest: "http://localhost:1317",
