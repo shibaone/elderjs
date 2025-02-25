@@ -1,5 +1,5 @@
-import { cosmos_getElderClient, cosmos_sendElderCustomTransaction, cosmos_getElderMsgAndFee, cosmos_getElderMsgAndFeeTxRaw } from './cosmos_wallet/index.js';
-import { eth_getAccountNumberAndSequence, eth_getElderMsgAndFee, eth_getElderAccountInfoFromSignature } from './eth_wallet/index.js';
+import { cosmos_getElderClient, cosmos_getElderMsgAndFeeTxRaw } from './cosmos_wallet/index.js';
+import { eth_getElderMsgAndFeeTxRaw, eth_getElderAccountInfoFromSignature, eth_broadcastTx } from './eth_wallet/index.js';
 import { getEthereumAddressFromCosmosCompressedPubKey, hexToUint8Array } from './common/helper.js';
 
 export {
@@ -9,12 +9,10 @@ export {
 
     // cosmos wallets
     cosmos_getElderClient,
-    cosmos_sendElderCustomTransaction,
-    cosmos_getElderMsgAndFee,
     cosmos_getElderMsgAndFeeTxRaw,
 
     // eth wallets
-    eth_getAccountNumberAndSequence,
-    eth_getElderMsgAndFee,
-    eth_getElderAccountInfoFromSignature
+    eth_getElderMsgAndFeeTxRaw,
+    eth_getElderAccountInfoFromSignature,
+    eth_broadcastTx,
 };
