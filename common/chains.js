@@ -45,12 +45,12 @@ const devnet1 = {
 };
 
 const devnet2 = {
-    chainId: "elder_dev2",
+    chainId: "elder_122018",
     chainName: "elder",
     rpc: "http://localhost:26657",
     rest: "http://localhost:1317",
     bip44: {
-        coinType: 118,
+        coinType: 60,
     },
     bech32Config: {
         bech32PrefixAccAddr: "elder",
@@ -104,7 +104,11 @@ const devnet2 = {
         coinDecimals: 6,
         coinGeckoId: "elder-token",
     },
-    features: ["ibc-go"]
+    features: [
+        "ibc-go",
+        "eth-address-gen",
+        "eth-key-sign"
+    ]
 }
 
 const devnet3 = {

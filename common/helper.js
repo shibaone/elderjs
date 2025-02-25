@@ -1,12 +1,22 @@
 import { coins } from "@cosmjs/stargate";
 import { ethers } from "ethers";
+import { Registry } from "@cosmjs/proto-signing";
+import { MsgSubmitRollTx } from "../elder_proto/dist/router/tx.js";
 
 const defaultElderFee = {
-    amount: coins(500, "uelder"), // Adjust fee and denom
+    amount: coins(10, "uelder"), // Adjust fee and denom
     gas: "200000", // Adjust gas
 };
 
+const gasAdjustment = 2;
+
 const customMessageTypeUrl = "/elder.router.MsgSubmitRollTx";
+const customelderpubsecp = "/elder.crypto.eldersecp256k1.PubKey";
+const customEthSecp256k1 = "/ethermint.crypto.v1.ethsecp256k1.PubKey";
+
+var commonRegistry  = new Registry();
+commonRegistry.register(customMessageTypeUrl, MsgSubmitRollTx);
+
 
 function bytesToHex(bytes) {
     return '0x' + Array.from(bytes, byte =>
@@ -94,7 +104,11 @@ function getEthereumAddressFromCosmosCompressedPubKey(compressedPubKey) {
 
 export {
     defaultElderFee,
+    gasAdjustment,
     customMessageTypeUrl,
+    customelderpubsecp,
+    customEthSecp256k1,
+    commonRegistry,
     bytesToHex,
     hexToBytes,
     strip0x,
