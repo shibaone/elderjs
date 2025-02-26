@@ -3,7 +3,7 @@ import { hexToUint8Array, getAccountNumberAndSequence, getElderBech32AddressFrom
 import { chainMap } from "../common/chains.js";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { ElderDirectSecp256k1Wallet } from "../common/elderDirectSigner.ts";
-import ElderTransaction from "../ElderTransaction.js";
+import ElderTransaction from "../common/ElderTransaction.js";
 import { fromBase64 } from "@cosmjs/encoding";
 import { StargateClient } from "@cosmjs/stargate";
 import { defaultElderFee, customMessageTypeUrl, hexToBytes, strip0x, stringToHex, gasAdjustment, commonRegistry, simulateElderTransaction, createSignDoc, ETH_WALLET_ID } from "../common/helper.js";

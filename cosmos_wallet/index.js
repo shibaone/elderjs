@@ -2,7 +2,7 @@ import { SigningStargateClient } from "@cosmjs/stargate";
 import { ethers } from "ethers";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { chainMap } from "../common/chains.js";
-import ElderTransaction from "../ElderTransaction.js";
+import ElderTransaction from "../common/ElderTransaction.js";
 import { fromBase64 } from "@cosmjs/encoding";
 import { defaultElderFee, customMessageTypeUrl, bytesToHex, hexToBytes, strip0x, stringToHex, gasAdjustment, commonRegistry, getAccountNumberAndSequence, simulateElderTransaction, createSignDoc, COSMOS_WALLET_ID } from "../common/helper.js";
 
