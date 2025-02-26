@@ -12,6 +12,9 @@ import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { keccak_256 } from "@noble/hashes/sha3";
 import { bech32 } from "bech32";
 
+const COSMOS_WALLET_ID = 1;
+const ETH_WALLET_ID = 2;
+
 const defaultElderFee = {
     amount: coins(500000, "uelder"), // Adjust fee and denom
     gas: "200000", // Adjust gas
@@ -133,6 +136,23 @@ async function getAccountNumberAndSequence(restURL, elderAddress) {
     return { elderAccountNumber: accountInfo.account_number, elderAccountSequence: accountInfo.sequence };
 }
 
+function elderPublicKeyToCustomEthSecpKey(elderPublicKey) {
+    const compressedPublicKey = ethers.SigningKey.computePublicKey(elderPublicKey, true)
+
+    var pubKeyBytes = hexToUint8Array(compressedPublicKey.slice(2));
+
+    const pubkey = EthSecpPubKey.encode(EthSecpPubKey.fromPartial({
+        key: pubKeyBytes,
+    })).finish()
+
+    let pubk = {
+        typeUrl: customEthSecp256k1,
+        value: pubkey,
+    }
+
+    return pubk;
+}
+
 function elderPublicKeyToCustomElderSecpKey(elderPublicKey) {
     const compressedPublicKey = ethers.SigningKey.computePublicKey(elderPublicKey, true)
 
@@ -151,10 +171,15 @@ function elderPublicKeyToCustomElderSecpKey(elderPublicKey) {
 }
 
 
-function createSignDoc(elderMsg, elderPublicKey, elderFee, elderAccountNumber, elderAccountSequence, elderChainID) {
+function createSignDoc(elderMsg, elderPublicKey, elderFee, elderAccountNumber, elderAccountSequence, elderChainID, WALLET_ID) {
     const txBodyBytes = createTxBodyBytes(elderMsg);
 
-    const pubk = elderPublicKeyToCustomElderSecpKey(elderPublicKey)
+    var pubk;
+    if (WALLET_ID === ETH_WALLET_ID) {
+        pubk = elderPublicKeyToCustomElderSecpKey(elderPublicKey)
+    } else {
+        pubk = elderPublicKeyToCustomEthSecpKey(elderPublicKey)
+    }
 
     const authInfoBytes = makeAuthInfoBytes(
         [{ pubkey: pubk, sequence: elderAccountSequence }],
@@ -169,10 +194,16 @@ function createSignDoc(elderMsg, elderPublicKey, elderFee, elderAccountNumber, e
     return { signDoc }
 }
 
-async function simulateElderTransaction(elderMsg, elderPublicKey, elderAccountSequence, elderRestURL) {
+async function simulateElderTransaction(elderMsg, elderPublicKey, elderAccountSequence, elderRestURL, WALLET_ID) {
     const messages = [elderMsg]
     const anyMsgs = messages.map((m) => commonRegistry.encodeAsAny(m))
-    const pubk = elderPublicKeyToCustomElderSecpKey(elderPublicKey);
+
+    var pubk;
+    if (WALLET_ID === ETH_WALLET_ID) {
+        pubk = elderPublicKeyToCustomElderSecpKey(elderPublicKey)
+    } else {
+        pubk = elderPublicKeyToCustomEthSecpKey(elderPublicKey)
+    }
 
     const tx = Tx.fromPartial({
         authInfo: AuthInfo.fromPartial({
@@ -239,6 +270,8 @@ export {
     customMessageTypeUrl,
     customElderpubsecp,
     customEthSecp256k1,
+    COSMOS_WALLET_ID,
+    ETH_WALLET_ID,
     commonRegistry,
     toBase64,
     bytesToHex,

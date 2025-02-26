@@ -6,7 +6,7 @@ import { ElderDirectSecp256k1Wallet } from "../common/elderDirectSigner.ts";
 import ElderTransaction from "../ElderTransaction.js";
 import { fromBase64 } from "@cosmjs/encoding";
 import { StargateClient } from "@cosmjs/stargate";
-import { defaultElderFee, customMessageTypeUrl, hexToBytes, strip0x, stringToHex, gasAdjustment, commonRegistry, simulateElderTransaction, createSignDoc } from "../common/helper.js";
+import { defaultElderFee, customMessageTypeUrl, hexToBytes, strip0x, stringToHex, gasAdjustment, commonRegistry, simulateElderTransaction, createSignDoc, ETH_WALLET_ID } from "../common/helper.js";
 
 async function newElderDirectSecp256k1Wallet(elderPublicKey) {
     const compressedPublicKey = ethers.SigningKey.computePublicKey(elderPublicKey, true)
@@ -70,11 +70,11 @@ async function eth_getElderMsgAndFeeTxRaw(tx, elderAddress, uncompressedElderPub
 
     let elderFee = defaultElderFee;
 
-    let gasData = await simulateElderTransaction(elderMsg, elderPublicKey, elderAccountSequence, elderChainInfo.rest);
+    let gasData = await simulateElderTransaction(elderMsg, elderPublicKey, elderAccountSequence, elderChainInfo.rest, ETH_WALLET_ID);
 
     elderFee.gas = parseInt(parseInt(gasData.gas_info.gas_used) * gasAdjustment);
 
-    const { signDoc } = createSignDoc(elderMsg, elderPublicKey, elderFee, elderAccountNumber, elderAccountSequence, elderChainInfo.chainId);
+    const { signDoc } = createSignDoc(elderMsg, elderPublicKey, elderFee, elderAccountNumber, elderAccountSequence, elderChainInfo.chainId, ETH_WALLET_ID);
 
     const signingWallet = newElderDirectSecp256k1Wallet(elderPublicKey);
 

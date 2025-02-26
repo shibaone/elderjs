@@ -4,7 +4,7 @@ import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { chainMap } from "../common/chains.js";
 import ElderTransaction from "../ElderTransaction.js";
 import { fromBase64 } from "@cosmjs/encoding";
-import { defaultElderFee, customMessageTypeUrl, bytesToHex, hexToBytes, strip0x, stringToHex, gasAdjustment, commonRegistry, getAccountNumberAndSequence, simulateElderTransaction, createSignDoc } from "../common/helper.js";
+import { defaultElderFee, customMessageTypeUrl, bytesToHex, hexToBytes, strip0x, stringToHex, gasAdjustment, commonRegistry, getAccountNumberAndSequence, simulateElderTransaction, createSignDoc, COSMOS_WALLET_ID } from "../common/helper.js";
 
 async function cosmos_getElderClient(elderChainConfig) {
     const elderChainInfo = chainMap.get(elderChainConfig.chainName);
@@ -100,11 +100,11 @@ async function cosmos_getElderMsgAndFeeTxRaw(tx, elderAddress, elderPublicKey, g
 
     console.log("elderMsg", elderMsg, "elderPublicKey", elderPublicKey, "elderAccountSequence", elderAccountSequence, "elderChainInfo", elderChainInfo.rest);
 
-    let gasData = await simulateElderTransaction(elderMsg, elderPublicKey, elderAccountSequence, elderChainInfo.rest);
+    let gasData = await simulateElderTransaction(elderMsg, elderPublicKey, elderAccountSequence, elderChainInfo.rest, COSMOS_WALLET_ID);
 
     elderFee.gas = parseInt(parseInt(gasData.gas_info.gas_used) * gasAdjustment);
 
-    const { signDoc } = createSignDoc(elderMsg, elderPublicKey, elderFee, elderAccountNumber, elderAccountSequence, elderChainInfo.chainId);
+    const { signDoc } = createSignDoc(elderMsg, elderPublicKey, elderFee, elderAccountNumber, elderAccountSequence, elderChainInfo.chainId, COSMOS_WALLET_ID);
 
     const offlineSigner = window.getOfflineSigner(elderChainInfo.chainId);
     const { signature, signed } = await offlineSigner.signDirect(elderAddress, signDoc)
