@@ -1,14 +1,14 @@
-import { ethers } from "ethers";
-import { hexToUint8Array, getAccountNumberAndSequence, getElderBech32AddressFromElderPublicKey } from "../common/helper.js";
-import { chainMap } from "../common/chains.js";
-import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
-import { ElderDirectSecp256k1Wallet } from "../common/elderDirectSigner.ts";
-import ElderTransaction from "../common/ElderTransaction.js";
 import { fromBase64 } from "@cosmjs/encoding";
 import { StargateClient } from "@cosmjs/stargate";
-import { defaultElderFee, customMessageTypeUrl, hexToBytes, strip0x, stringToHex, gasAdjustment, commonRegistry, simulateElderTransaction, createSignDoc, ETH_WALLET_ID } from "../common/helper.js";
+import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
+import { ethers } from "ethers";
+import { chainMap } from "../common/chains.js";
+import { ElderDirectSecp256k1Wallet } from "../common/elderDirectSigner";
+import ElderTransaction from "../common/ElderTransaction.js";
+import { commonRegistry, createSignDoc, customMessageTypeUrl, defaultElderFee, ETH_WALLET_ID, gasAdjustment, getAccountNumberAndSequence, getElderBech32AddressFromElderPublicKey, hexToBytes, hexToUint8Array, simulateElderTransaction, stringToHex, strip0x } from "../common/helper.js";
+import type { ElderConfig } from "../common/types.ts";
 
-async function newElderDirectSecp256k1Wallet(elderPublicKey) {
+async function newElderDirectSecp256k1Wallet(elderPublicKey: string) {
     const compressedPublicKey = ethers.SigningKey.computePublicKey(elderPublicKey, true)
     const pubKeyBytes = hexToUint8Array(compressedPublicKey.slice(2));
 
@@ -17,9 +17,11 @@ async function newElderDirectSecp256k1Wallet(elderPublicKey) {
 }
 
 // async function eth_getElderMsgAndFeeTxRaw(tx, elderAddress, elderPublicKey, gasLimit, value, rollChainId, rollID, chainName, elderChainConfig) {
-async function eth_getElderMsgAndFeeTxRaw(tx, elderAddress, uncompressedElderPublicKey, gasLimit, value, elderChainConfig) {
+async function eth_getElderMsgAndFeeTxRaw(tx: ethers.TransactionLike<string>, elderAddress: string, uncompressedElderPublicKey: string, gasLimit: bigint, value: bigint, elderChainConfig: ElderConfig): Promise<{ tx_hash: string; rawTx: Uint8Array<ArrayBufferLike> }> {
     const elderPublicKey = ethers.SigningKey.computePublicKey(uncompressedElderPublicKey, true)
     const elderChainInfo = chainMap.get(elderChainConfig.chainName);
+    if(!elderChainInfo) throw new Error("failed to get elder chain");
+
     elderChainInfo.rpc = elderChainConfig.rpc;
     elderChainInfo.rest = elderChainConfig.rest;
 
@@ -72,7 +74,7 @@ async function eth_getElderMsgAndFeeTxRaw(tx, elderAddress, uncompressedElderPub
 
     let gasData = await simulateElderTransaction(elderMsg, elderPublicKey, elderAccountSequence, elderChainInfo.rest, ETH_WALLET_ID);
 
-    elderFee.gas = parseInt(parseInt(gasData.gas_info.gas_used) * gasAdjustment);
+    elderFee.gas = parseInt(gasData.gas_info.gas_used) * gasAdjustment;
 
     const { signDoc } = createSignDoc(elderMsg, elderPublicKey, elderFee, elderAccountNumber, elderAccountSequence, elderChainInfo.chainId, ETH_WALLET_ID);
 
@@ -99,7 +101,7 @@ async function eth_getElderAccountInfoFromSignature(message, signature) {
     return { elderAddr, recoveredPublicKey };
 }
 
-async function eth_broadcastTx(rawTx, elderRPCURL) {
+async function eth_broadcastTx(rawTx: Uint8Array<ArrayBufferLike>, elderRPCURL: string) {
     const stargateClient = await StargateClient.connect(
         elderRPCURL,
         {
@@ -115,4 +117,5 @@ async function eth_broadcastTx(rawTx, elderRPCURL) {
 }
 
 
-export { eth_getElderMsgAndFeeTxRaw, eth_getElderAccountInfoFromSignature, eth_broadcastTx };
+export { eth_broadcastTx, eth_getElderAccountInfoFromSignature, eth_getElderMsgAndFeeTxRaw };
+

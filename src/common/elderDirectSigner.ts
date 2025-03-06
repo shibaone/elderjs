@@ -1,9 +1,8 @@
-import { encodeSecp256k1Signature, rawSecp256k1PubkeyToRawAddress } from "@cosmjs/amino";
-import { Secp256k1, sha256 } from "@cosmjs/crypto";
-import { toBech32 } from "@cosmjs/encoding";
-import { AccountData, DirectSignResponse, OfflineDirectSigner, makeSignDoc, makeSignBytes } from "@cosmjs/proto-signing"
+import { encodeSecp256k1Signature } from "@cosmjs/amino";
+import { Secp256k1 } from "@cosmjs/crypto";
+import { AccountData, DirectSignResponse, OfflineDirectSigner, makeSignBytes } from "@cosmjs/proto-signing";
 import { SignDoc } from "cosmjs-types/cosmos/tx/v1beta1/tx";
-import { getElderBech32AddressFromElderPublicKey, bytesToHex } from "./helper";
+import { bytesToHex, getElderBech32AddressFromElderPublicKey } from "./helper";
 
 declare var window: any
 
@@ -85,7 +84,7 @@ export class ElderDirectSecp256k1Wallet implements OfflineDirectSigner {
         const [account] = await window.ethereum.request({
             method: "eth_accounts",
         });
-        
+
         const signature = await window.ethereum.request({
             method: 'personal_sign',
             params: [bytesToHex(signBytes), account]

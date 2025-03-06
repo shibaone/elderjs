@@ -1,36 +1,44 @@
 {
-  "name": "elderjs",
-  "version": "1.2.8",
-  "description": "JS lib to enable frontend for Rollapps connected to Elder Ecosystem",
-  "main": "index.js",
-  "type": "module",
-  "scripts": {
-    "transpile-ts": "npx tsc"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/0xElder/elderjs.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/0xElder/elderjs/issues"
-  },
-  "homepage": "https://github.com/0xElder/elderjs#readme",
-  "dependencies": {
-    "@bufbuild/protobuf": "^2.2.2",
-    "@cosmjs/proto-signing": "^0.32.4",
-    "@cosmjs/stargate": "^0.32.4",
-    "@noble/hashes": "^1.7.1",
-    "bech32": "^2.0.0",
-    "ethers": "^6.13.5",
-    "typescript": "^5.7.2"
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.16.0",
-    "eslint": "^9.16.0",
-    "eslint-plugin-react": "^7.37.2",
-    "globals": "^15.13.0",
-    "typescript-eslint": "^8.17.0"
-  }
+    "name": "elderjs",
+    "version": "1.2.7",
+    "description": "JS lib to enable frontend for Rollapps connected to Elder Ecosystem",
+    "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts",
+    "scripts": {
+        "build": "tsup src/index.ts --format cjs,esm --dts",
+        "postinstall": "npm run build",
+        "prepare": "npm run build"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/0xElder/elderjs.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/0xElder/elderjs/issues"
+    },
+    "homepage": "https://github.com/0xElder/elderjs#readme",
+    "dependencies": {
+        "@bufbuild/protobuf": "^2.2.2",
+        "@cosmjs/amino": "^0.33.0",
+        "@cosmjs/crypto": "^0.33.0",
+        "@cosmjs/encoding": "^0.33.0",
+        "@cosmjs/proto-signing": "^0.32.4",
+        "@cosmjs/stargate": "^0.32.4",
+        "@noble/hashes": "^1.7.1",
+        "bech32": "^2.0.0",
+        "ethers": "^6.13.5",
+        "tsup": "^8.4.0",
+        "typescript": "^5.7.2"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.16.0",
+        "@keplr-wallet/types": "^0.12.190",
+        "eslint": "^9.16.0",
+        "eslint-plugin-react": "^7.37.2",
+        "globals": "^15.13.0",
+        "typescript-eslint": "^8.17.0"
+    }
 }

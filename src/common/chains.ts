@@ -4,7 +4,7 @@ const devnet1 = {
     rpc: "http://localhost:26657",
     rest: "http://localhost:1317",
     bip44: {
-        coinType: 118
+        coinType: 118,
     },
     bech32Config: {
         bech32PrefixAccAddr: "elder",
@@ -12,15 +12,15 @@ const devnet1 = {
         bech32PrefixValAddr: "eldervaloper",
         bech32PrefixValPub: "eldervaloperpub",
         bech32PrefixConsAddr: "eldervalcons",
-        bech32PrefixConsPub: "eldervalconspub"
+        bech32PrefixConsPub: "eldervalconspub",
     },
     currencies: [
         {
             coinDenom: "elder",
             coinMinimalDenom: "elder",
             coinDecimals: 6,
-            coinGeckoId: "elder-token"
-        }
+            coinGeckoId: "elder-token",
+        },
     ],
     feeCurrencies: [
         {
@@ -31,17 +31,17 @@ const devnet1 = {
             gasPriceStep: {
                 low: 0.01,
                 average: 0.025,
-                high: 0.04
-            }
-        }
+                high: 0.04,
+            },
+        },
     ],
     stakeCurrency: {
         coinDenom: "elder",
         coinMinimalDenom: "elder",
         coinDecimals: 6,
-        coinGeckoId: "elder-token"
+        coinGeckoId: "elder-token",
     },
-    features: ["ibc-go"]
+    features: ["ibc-go"],
 };
 
 const devnet2 = {
@@ -104,12 +104,8 @@ const devnet2 = {
         coinDecimals: 6,
         coinGeckoId: "elder-token",
     },
-    features: [
-        "ibc-go",
-        "eth-address-gen",
-        "eth-key-sign"
-    ]
-}
+    features: ["ibc-go", "eth-address-gen", "eth-key-sign"],
+};
 
 const devnet3 = {
     chainId: "elder_devnet_3",
@@ -171,8 +167,8 @@ const devnet3 = {
         coinDecimals: 6,
         coinGeckoId: "elder-token",
     },
-    features: ["ibc-go"]
-}
+    features: ["ibc-go"],
+};
 
 const devnet4 = {
     chainId: "elder_122018",
@@ -234,12 +230,8 @@ const devnet4 = {
         coinDecimals: 6,
         coinGeckoId: "elder-token",
     },
-    features: [
-        "ibc-go",
-        "eth-address-gen",
-        "eth-key-sign"
-    ]
-}
+    features: ["ibc-go", "eth-address-gen", "eth-key-sign"],
+};
 
 export const chainMap = new Map([
     ['devnet-1', devnet1],
@@ -247,5 +239,3 @@ export const chainMap = new Map([
     ['devnet-3', devnet3],
     ['devnet-4', devnet4],
 ]);
-
-

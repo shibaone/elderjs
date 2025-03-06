@@ -1,27 +1,44 @@
-import { SigningStargateClient } from "@cosmjs/stargate";
-import { ethers } from "ethers";
-import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
-import { chainMap } from "../common/chains.js";
-import ElderTransaction from "../common/ElderTransaction.js";
 import { fromBase64 } from "@cosmjs/encoding";
-import { defaultElderFee, customMessageTypeUrl, bytesToHex, hexToBytes, strip0x, stringToHex, gasAdjustment, commonRegistry, getAccountNumberAndSequence, simulateElderTransaction, createSignDoc, COSMOS_WALLET_ID } from "../common/helper.js";
+import { OfflineDirectSigner, OfflineSigner } from "@cosmjs/proto-signing";
+import { AminoTypes, SigningStargateClient } from "@cosmjs/stargate";
+import type { ChainInfo } from "@keplr-wallet/types";
+import { Window as KeplrWindow } from '@keplr-wallet/types';
+import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
+import { ethers } from "ethers";
+import { chainMap } from "../common/chains";
+import ElderTransaction from "../common/ElderTransaction";
+import { bytesToHex, commonRegistry, COSMOS_WALLET_ID, createSignDoc, customMessageTypeUrl, defaultElderFee, gasAdjustment, getAccountNumberAndSequence, hexToBytes, simulateElderTransaction, stringToHex, strip0x } from "../common/helper.js";
+import type { ElderConfig } from "../common/types";
 
-async function cosmos_getElderClient(elderChainConfig) {
+declare global {
+    interface Window extends KeplrWindow {
+        isStartFromInteractionWithSidePanelEnabled: boolean | undefined;
+    }
+}
+
+async function getKeplrSigner(chainInfo: ChainInfo) {
+    if (!window.keplr) {
+        throw new Error("Please install Keplr Wallet.");
+    }
+    await window.keplr.experimentalSuggestChain(chainInfo);
+    await window.keplr.enable(chainInfo.chainId);
+    return window.getOfflineSigner?.(chainInfo.chainId);
+}
+
+async function cosmos_getElderClient(elderChainConfig: ElderConfig, opts?: { signer?: OfflineSigner }) {
     const elderChainInfo = chainMap.get(elderChainConfig.chainName);
 
+    if(!elderChainInfo) throw new Error("failed to get elder chain");
+
+    let offlineSigner = opts?.signer;
     elderChainInfo.rpc = elderChainConfig.rpc;
     elderChainInfo.rest = elderChainConfig.rest;
 
-    if (!window.keplr) {
-        alert("Please install Keplr Wallet.");
-        return;
-    }
-
     try {
-        await window.keplr.experimentalSuggestChain(elderChainInfo);
-        await window.keplr.enable(elderChainInfo.chainId);
+        if (!offlineSigner) offlineSigner = await getKeplrSigner(elderChainInfo);
 
-        const offlineSigner = window.getOfflineSigner(elderChainInfo.chainId);
+        if (!offlineSigner) throw new Error("no offline signer found");
+
         const accounts = await offlineSigner.getAccounts();
         let elderAddress = accounts[0].address;
         let elderPublicKey = bytesToHex(accounts[0].pubkey);
@@ -49,8 +66,10 @@ async function cosmos_getElderClient(elderChainConfig) {
     }
 }
 
-async function cosmos_getElderMsgAndFeeTxRaw(tx, elderAddress, elderPublicKey, gasLimit, value, rollChainId, rollID, chainName) {
+async function cosmos_getElderMsgAndFeeTxRaw(tx: ethers.TransactionLike<string>, elderAddress: string, elderPublicKey: string, gasLimit: bigint, value: bigint, rollChainId: bigint, rollID: number, chainName: string, opts?: { signer?: OfflineSigner }) {
     const elderChainInfo = chainMap.get(chainName);
+    if(!elderChainInfo) throw new Error("failed to get elder chain")
+
     const { elderAccountNumber, elderAccountSequence } = await getAccountNumberAndSequence(elderChainInfo.rest, elderAddress);
 
     // Create Elder inner transaction
@@ -102,11 +121,13 @@ async function cosmos_getElderMsgAndFeeTxRaw(tx, elderAddress, elderPublicKey, g
 
     let gasData = await simulateElderTransaction(elderMsg, elderPublicKey, elderAccountSequence, elderChainInfo.rest, COSMOS_WALLET_ID);
 
-    elderFee.gas = parseInt(parseInt(gasData.gas_info.gas_used) * gasAdjustment);
+    elderFee.gas = parseInt(gasData.gas_info.gas_used) * gasAdjustment;
 
     const { signDoc } = createSignDoc(elderMsg, elderPublicKey, elderFee, elderAccountNumber, elderAccountSequence, elderChainInfo.chainId, COSMOS_WALLET_ID);
 
-    const offlineSigner = window.getOfflineSigner(elderChainInfo.chainId);
+    const offlineSigner = (opts?.signer || await getKeplrSigner(elderChainInfo)) as OfflineDirectSigner;
+    if(!offlineSigner) throw new Error("failed to get offline signer");
+
     const { signature, signed } = await offlineSigner.signDirect(elderAddress, signDoc)
 
     var rawTx = TxRaw.encode({
