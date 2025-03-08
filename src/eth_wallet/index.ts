@@ -2,9 +2,9 @@ import { fromBase64 } from "@cosmjs/encoding";
 import { StargateClient } from "@cosmjs/stargate";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { ethers } from "ethers";
-import { chainMap } from "../common/chains.js";
+import { chainMap } from "../common/chains";
 import { ElderDirectSecp256k1Wallet } from "../common/elderDirectSigner";
-import ElderTransaction from "../common/ElderTransaction/index.js";
+import ElderTransaction from "../common/ElderTransaction/index";
 import {
     createSignDoc,
     customMessageTypeUrl,

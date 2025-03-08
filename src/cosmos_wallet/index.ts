@@ -1,8 +1,7 @@
 import { fromBase64 } from "@cosmjs/encoding";
 import { OfflineDirectSigner, OfflineSigner } from "@cosmjs/proto-signing";
 import { SigningStargateClient } from "@cosmjs/stargate";
-import type { ChainInfo } from "@keplr-wallet/types";
-import { Window as KeplrWindow } from "@keplr-wallet/types";
+import type { ChainInfo, Window as KeplrWindow } from "@keplr-wallet/types";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { ethers } from "ethers";
 import { chainMap } from "../common/chains";
@@ -20,7 +19,7 @@ import {
     simulateElderTransaction,
     stringToHex,
     strip0x,
-} from "../common/helper.js";
+} from "../common/helper";
 import type { ElderConfig } from "../common/types";
 
 declare global {
