@@ -6,7 +6,6 @@ import { chainMap } from "../common/chains.js";
 import { ElderDirectSecp256k1Wallet } from "../common/elderDirectSigner";
 import ElderTransaction from "../common/ElderTransaction/index.js";
 import {
-    commonRegistry,
     createSignDoc,
     customMessageTypeUrl,
     defaultElderFee,
@@ -155,10 +154,10 @@ async function eth_broadcastTx(
     elderRPCURL: string
 ) {
     const stargateClient = await StargateClient.connect(elderRPCURL, {
-        registry: commonRegistry,
-        aminoTypes: {
-            prefix: "elder",
-        },
+        // registry: commonRegistry,
+        // aminoTypes: {
+        //     prefix: "elder",
+        // },
     });
 
     const broadcastResult = await stargateClient.broadcastTx(rawTx);
