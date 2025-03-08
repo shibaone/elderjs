@@ -13,10 +13,10 @@ import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { SimulateRequest } from "cosmjs-types/cosmos/tx/v1beta1/service";
 import { AuthInfo, Fee, Tx, TxBody } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { ethers } from "ethers";
-import { PubKey as ElderSecpPubKey } from "../elder_proto/crypto/eldersecp256k1/keys.js";
-import { PubKey as EthSecpPubKey } from "../elder_proto/crypto/ethsecp256k1/keys.js";
-import { MsgSubmitRollTx } from "../elder_proto/router/tx.js";
-import type { ElderFee, ElderMessage, GasData } from "./types.js";
+import { PubKey as ElderSecpPubKey } from "../elder_proto/crypto/eldersecp256k1/keys";
+import { PubKey as EthSecpPubKey } from "../elder_proto/crypto/ethsecp256k1/keys";
+import { MsgSubmitRollTx } from "../elder_proto/router/tx";
+import type { ElderFee, ElderMessage, GasData } from "./types";
 
 const COSMOS_WALLET_ID = 1;
 const ETH_WALLET_ID = 2;

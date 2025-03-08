@@ -18,8 +18,8 @@ import {
     simulateElderTransaction,
     stringToHex,
     strip0x,
-} from "../common/helper.js";
-import type { ElderConfig } from "../common/types.ts";
+} from "../common/helper";
+import type { ElderConfig } from "../common/types";
 
 async function newElderDirectSecp256k1Wallet(elderPublicKey: string) {
     const compressedPublicKey = ethers.SigningKey.computePublicKey(
