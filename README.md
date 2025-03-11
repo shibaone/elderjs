@@ -2,7 +2,7 @@
 
   
 
-![GitHub version](https://img.shields.io/badge/version-1.2.9-blue.svg)
+![GitHub version](https://img.shields.io/badge/version-1.2.10-blue.svg)
 
 ![License](https://img.shields.io/badge/license-ISC-green.svg)
 
@@ -57,7 +57,6 @@
   
 
 ```bash
-
 npm  install  elderjs
 
 ```
@@ -73,20 +72,16 @@ Clone the repository and install dependencies:
   
 
 ```bash
-
 git  clone  https://github.com/0xElder/elderjs.git
 
 cd  elderjs
 
 npm  install
-
 ```
 
   
 
 ---
-
-  
 
 ## Usage
 
@@ -97,66 +92,49 @@ npm  install
   
 
 ```javascript
+import { eth_getElderMsgAndFeeTxRaw, eth_broadcastTx, eth_getElderAccountInfoFromSignature } from  'elderjs';
 
-import { eth_getElderMsgAndFeeTxRaw, eth_broadcastTx } from  'elderjs/eth_wallet';
-
-  
+let  message  =  "Sign to Login";
+const  signer  =  await  provider.getSigner();
+const  signature  =  await  signer.signMessage(message);
+var { recoveredPublicKey, elderAddr } =  await  eth_getElderAccountInfoFromSignature(message, signature)
 
 // Example transaction data
 
 const  tx = await  DUMMY_CONTRACT.METHOD.populateTransaction();
 
-const  elderAddress = "elder1exampleaddress";
-
-const  elderPublicKey = "0xUncompressedPublicKey";
+const  elderAddress = elderAddr;
+const  elderPublicKey = recoveredPublicKey;
 
 const  gasLimit = 21000;
 
 const  elderChainConfig = {
-
-chainName:  "elder-testnet",
-
-rpc:  "https://rpc.elder.example.com",
-
-rest:  "https://rest.elder.example.com",
-
-rollChainID:  1234,
-
-// Elder Roll ID
-rollID:  2,
-
+	chainName:  "elder-testnet",
+	rpc:  "https://rpc.elder.example.com",
+	rest:  "https://rest.elder.example.com",
+	rollChainID:  1234,
+	
+	// Elder Roll ID
+	rollID:  2,
 };
-
-  
 
 // Create and sign transaction
 
 const { tx_hash, rawTx } = await  eth_getElderMsgAndFeeTxRaw(
-
-tx,
-
-elderAddress,
-
-elderPublicKey,
-
-gasLimit,
-
-ethers.parseEther("1.0"),
-
-elderChainConfig
-
+    tx,
+    elderAddress,
+    elderPublicKey,
+    gasLimit,
+    ethers.parseEther("1.0"),
+    elderChainConfig
 );
 
-  
-
 // Broadcast transaction
+// broadcastResult.code == 0 ( for tx success )
 
 const  broadcastResult = await  eth_broadcastTx(rawTx, elderChainConfig.rpc);
 
-  
-
 console.log("Transaction Hash:", tx_hash);
-
 console.log("Broadcast Result:", broadcastResult);
 
 ```
@@ -169,66 +147,46 @@ console.log("Broadcast Result:", broadcastResult);
 
 ```javascript
 
-import { cosmos_getElderClient, cosmos_getElderMsgAndFeeTxRaw } from  'elderjs/cosmos_wallet';
-
-  
+import { cosmos_getElderClient, cosmos_getElderMsgAndFeeTxRaw, getEthereumAddressFromCosmosCompressedPubKey } from  'elderjs';
 
 // Elder chain configuration
 
 const  elderChainConfig = {
-
-chainName:  "elder-testnet",
-
-rpc:  "https://rpc.elder.example.com",
-
-rest:  "https://rest.elder.example.com",
-
+	chainName:  "elder-testnet",
+	rpc:  "https://rpc.elder.example.com",
+	rest:  "https://rest.elder.example.com",
+	rollChainID:  1234,
+	
+	// Elder Roll ID
+	rollID:  2,
 };
-
-  
 
 // Connect to Keplr and get client
 
 const { elderAddress, elderClient, elderPublicKey } = await  cosmos_getElderClient(elderChainConfig);
-
+const  ethAddress  =  getEthereumAddressFromCosmosCompressedPubKey(elderPublicKey);
   
-
 // Example transaction data
-
 const  tx = await  DUMMY_CONTRACT.METHOD.populateTransaction();
 
 // Create and sign transaction
-
 const { tx_hash, rawTx } = await  cosmos_getElderMsgAndFeeTxRaw(
-
-tx,
-
-elderAddress,
-
-elderPublicKey,
-
-21000, // gasLimit
-
-ethers.parseEther("1.0"),
-
-1234, // rollChainId
-
-2, // ElderRollID
-
-"elder-testnet"  // chainName
-
+    tx,
+    elderAddress,
+    elderPublicKey,
+    21000, // gasLimit
+    ethers.parseEther("1.0"),
+    1234, // rollChainId
+    2, // ElderRollID
+    "elder-testnet"  // chainName
 );
 
-  
-
 // Broadcast transaction using the client
+// broadcastResult.code == 0 ( for tx success )
 
 const  broadcastResult = await  elderClient.broadcastTx(rawTx);
 
-  
-
 console.log("Transaction Hash:", tx_hash);
-
 console.log("Broadcast Result:", broadcastResult);
 
 ```
