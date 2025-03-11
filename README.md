@@ -93,6 +93,15 @@ npm  install
 
 ```javascript
 import { eth_getElderMsgAndFeeTxRaw, eth_broadcastTx, eth_getElderAccountInfoFromSignature } from  'elderjs';
+import { ethers } from "ethers";
+
+function getWeb3Provider() {
+    if (window.ethereum) {
+        return new ethers.BrowserProvider(window.ethereum);
+    }
+    return null;
+}
+const provider = getWeb3Provider();
 
 let  message  =  "Sign to Login";
 const  signer  =  await  provider.getSigner();
