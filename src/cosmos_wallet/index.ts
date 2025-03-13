@@ -64,9 +64,9 @@ async function cosmos_getElderClient(
             offlineSigner,
             {
                 registry: commonRegistry,
-                // aminoTypes: {
-                //     prefix: "elder",
-                // },
+                aminoTypes: {
+                    prefix: "elder",
+                } as any,
             }
         );
 

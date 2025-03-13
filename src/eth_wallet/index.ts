@@ -1,11 +1,12 @@
 import { fromBase64 } from "@cosmjs/encoding";
 import { StargateClient } from "@cosmjs/stargate";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
-import { ethers } from "ethers";
+import { BigNumberish, ethers } from "ethers";
 import { chainMap } from "../common/chains";
 import { ElderDirectSecp256k1Wallet } from "../common/elderDirectSigner";
 import ElderTransaction from "../common/ElderTransaction/index";
 import {
+    commonRegistry,
     createSignDoc,
     customMessageTypeUrl,
     defaultElderFee,
@@ -38,8 +39,8 @@ async function eth_getElderMsgAndFeeTxRaw(
     tx: ethers.TransactionLike<string>,
     elderAddress: string,
     uncompressedElderPublicKey: string,
-    gasLimit: bigint,
-    value: bigint,
+    gasLimit: BigNumberish,
+    value: BigNumberish,
     elderChainConfig: ElderConfig
 ): Promise<{ tx_hash: string; rawTx: Uint8Array<ArrayBufferLike> }> {
     const elderPublicKey = ethers.SigningKey.computePublicKey(
@@ -118,11 +119,12 @@ async function eth_getElderMsgAndFeeTxRaw(
         ETH_WALLET_ID
     );
 
-    const signingWallet = newElderDirectSecp256k1Wallet(elderPublicKey);
+    const signingWallet = await newElderDirectSecp256k1Wallet(elderPublicKey);
 
-    const { signature, signed } = await (
-        await signingWallet
-    ).signDirect(elderAddress, signDoc);
+    const { signature, signed } = await signingWallet.signDirect(
+        elderAddress,
+        signDoc
+    );
 
     var rawTx = TxRaw.encode({
         bodyBytes: signed.bodyBytes,
@@ -154,11 +156,11 @@ async function eth_broadcastTx(
     elderRPCURL: string
 ) {
     const stargateClient = await StargateClient.connect(elderRPCURL, {
-        // registry: commonRegistry,
-        // aminoTypes: {
-        //     prefix: "elder",
-        // },
-    });
+        registry: commonRegistry,
+        aminoTypes: {
+            prefix: "elder",
+        },
+    } as any);
 
     const broadcastResult = await stargateClient.broadcastTx(rawTx);
     return broadcastResult;
