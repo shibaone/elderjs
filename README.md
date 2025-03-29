@@ -1,230 +1,342 @@
 # ElderJS
 
-![Version](https://img.shields.io/badge/version-1.0.6-blue)
-![License](https://img.shields.io/badge/license-ISC-lightgrey)
-[![GitHub issues](https://img.shields.io/github/issues/0xElder/elderjs)](https://github.com/0xElder/elderjs/issues)
+  
 
-**ElderJS** is a JavaScript library designed to facilitate the integration of Rollapps with the Elder Ecosystem. It enables seamless interaction with the Elder blockchain, wallet connection via Keplr, and the ability to create, sign, and broadcast custom transactions.
+![GitHub version](https://img.shields.io/badge/version-1.2.10-blue.svg)
 
----
+![License](https://img.shields.io/badge/license-ISC-green.svg)
 
-## 📚 **Table of Contents**
+![GitHub repo](https://img.shields.io/badge/repo-github.com/0xElder/elderjs-brightgreen.svg)
 
-- [📖 Introduction](#-introduction)
-- [✨ Features](#-features)
-- [📦 Installation](#-installation)
-- [🚀 Usage](#-usage)
-  - [1️⃣ Initialize Elder Client](#1️⃣-initialize-elder-client)
-  - [2️⃣ Create and Send Custom Transaction](#2️⃣-create-and-send-custom-transaction)
-- [📂 File Structure](#-file-structure)
-- [⚙️ Configuration](#️-configuration)
-- [📚 API Reference](#-api-reference)
-  - [getElderClient](#getelderclient)
-  - [sendElderCustomTransaction](#sendeldercustomtransaction)
-  - [getElderMsgAndFee](#geteldermsgandfee)
-- [📋 Dependencies](#-dependencies)
-- [🐞 Issues](#-issues)
-- [📜 License](#-license)
+  
+
+**ElderJS** is a JavaScript library designed to enable front-end integration for Rollapps connected to the Elder Ecosystem. It provides tools to interact with Ethereum and Cosmos-based wallets, facilitating transaction creation, signing, and broadcasting within the Elder framework.
+
+  
 
 ---
 
-## 📖 **Introduction**
+  
 
-**ElderJS** provides developers with a simple and effective way to connect to Rollapps on the Elder blockchain. It enables wallet connection, custom transaction generation, and broadcasting functionalities using Keplr and CosmJS. This library aims to reduce the complexity of interacting with Elder's Rollapp ecosystem and streamline dApp development.
+## Features
+
+  
+
+-  **Ethereum Wallet Support**: Create, sign, and broadcast transactions using Ethereum-based keys.
+
+-  **Cosmos Wallet Support**: Integrate with Keplr wallet for Cosmos-based transaction signing and broadcasting.
+
+-  **Elder Ecosystem Integration**: Seamlessly connect Rollapps to the Elder ecosystem with custom transaction handling.
+
+-  **TypeScript Support**: Fully typed codebase for better developer experience.
+
+  
 
 ---
 
-## ✨ **Features**
+  
 
-- 🔗 **Keplr Wallet Integration**: Easily connect and manage wallet interactions.
-- 🚀 **Custom Transaction Support**: Create and send custom transactions specific to Elder's Rollapp ecosystem.
-- ⚙️ **Custom Fees & Gas Management**: Set custom fees and gas limits for Rollapp transactions.
-- 📡 **RPC and REST Integration**: Interact with Elder nodes via RPC and REST endpoints.
+## Installation
 
----
+  
 
-## 📦 **Installation**
+### Prerequisites
 
-Install **ElderJS** via npm:
+  
+
+- Node.js (v16 or higher recommended)
+
+- npm or yarn
+
+- A modern browser with Web3 support (for Ethereum) or Keplr wallet (for Cosmos)
+
+  
+
+### Install via npm
+
+  
 
 ```bash
-npm install elderjs
+npm  install  elderjs
+
 ```
+
+  
+
+### Install from GitHub
+
+  
+
+Clone the repository and install dependencies:
+
+  
+
+```bash
+git  clone  https://github.com/0xElder/elderjs.git
+
+cd  elderjs
+
+npm  install
+```
+
+  
 
 ---
 
-## 🚀 **Usage**
+## Usage
 
-### 1️⃣ **Initialize Elder Client**
+  
 
-To initialize the Elder client and connect to a Rollapp using Keplr, use the `getElderClient` function.
+### Ethereum Wallet Example
+
+  
 
 ```javascript
-import { getElderClient } from 'elderjs';
+import { eth_getElderMsgAndFeeTxRaw, eth_broadcastTx, eth_getElderAccountInfoFromSignature } from  'elderjs';
+import { ethers } from "ethers";
 
-const elderChainConfig = {
-  chainName: 'your-chain-name',
-  rpc: 'https://your-rpc-url',
-  rest: 'https://your-rest-url',
-  rollID: 11,
+function getWeb3Provider() {
+    if (window.ethereum) {
+        return new ethers.BrowserProvider(window.ethereum);
+    }
+    return null;
+}
+const provider = getWeb3Provider();
+
+let  message  =  "Sign to Login";
+const  signer  =  await  provider.getSigner();
+const  signature  =  await  signer.signMessage(message);
+var { recoveredPublicKey, elderAddr } =  await  eth_getElderAccountInfoFromSignature(message, signature)
+
+// Example transaction data
+
+const  tx = await  DUMMY_CONTRACT.METHOD.populateTransaction();
+
+const  elderAddress = elderAddr;
+const  elderPublicKey = recoveredPublicKey;
+
+const  gasLimit = 21000;
+
+const  elderChainConfig = {
+	chainName:  "elder-testnet",
+	rpc:  "https://rpc.elder.example.com",
+	rest:  "https://rest.elder.example.com",
+	rollChainID:  1234,
+	
+	// Elder Roll ID
+	rollID:  2,
 };
 
-(async () => {
-  const { elderAddress, elderClient } = await getElderClient(elderChainConfig);
-  console.log('Connected address:', elderAddress);
-})();
-```
+// Create and sign transaction
 
-> **Note:** Keplr must be installed and enabled.
-
----
-
-### 2️⃣ **Create and Send Custom Transaction**
-
-To create and broadcast a custom transaction on a Rollapp, use the `getElderMsgAndFee` and `sendElderCustomTransaction` functions.
-
-```javascript
-import { getElderClient, getElderMsgAndFee, sendElderCustomTransaction } from 'elderjs';
-
-(async () => {
-  const { elderAddress, elderClient } = await getElderClient(elderChainConfig);
-
-  const tx = {
-    to: '0xRecipientAddress',
-    value: ethers.utils.parseEther('0.01'),
-  };
-
-  const { elderMsg, elderFee } = getElderMsgAndFee(
+const { tx_hash, rawTx } = await  eth_getElderMsgAndFeeTxRaw(
     tx,
     elderAddress,
-    200000, // gas limit
-    ethers.utils.parseEther('0.01'),
-    1, // rollapp-chainId
-    11 // elder-rollapp-id
-  );
+    elderPublicKey,
+    gasLimit,
+    ethers.parseEther("1.0"),
+    elderChainConfig
+);
 
-  await sendElderCustomTransaction(elderAddress, elderClient, elderMsg, elderFee);
-})();
-```
+// Broadcast transaction
+// broadcastResult.code == 0 ( for tx success )
 
-> **Note:** Replace the `to`, `value`, and other transaction details with your own custom values.
+const  broadcastResult = await  eth_broadcastTx(rawTx, elderChainConfig.rpc);
 
----
-
-## 📂 **File Structure**
+console.log("Transaction Hash:", tx_hash);
+console.log("Broadcast Result:", broadcastResult);
 
 ```
-elderjs/
-├── chains.js                 # Chain configuration file
-├── elder_proto/              # Protobuf files for custom messages
-│   └── dist/
-│       └── router/tx.js      # Compiled protobuf definitions for Rollapp messages
-├── index.js                  # Main entry point for ElderJS
-└── package.json              # Package metadata and dependencies
-```
 
----
+  
 
-## ⚙️ **Configuration**
+### Cosmos Wallet Example (with Keplr)
 
-To connect to a Rollapp, you'll need to provide the following chain configuration:
+  
 
 ```javascript
-const elderChainConfig = {
-  chainName: 'your-chain-name', // The chain name to connect to
-  rpc: 'https://your-rpc-url',  // The RPC endpoint
-  rest: 'https://your-rest-url' // The REST endpoint
-  rollID: 11                    // The elder-rollapp-id
+
+import { cosmos_getElderClient, cosmos_getElderMsgAndFeeTxRaw, getEthereumAddressFromCosmosCompressedPubKey } from  'elderjs';
+
+// Elder chain configuration
+
+const  elderChainConfig = {
+	chainName:  "elder-testnet",
+	rpc:  "https://rpc.elder.example.com",
+	rest:  "https://rest.elder.example.com",
+	rollChainID:  1234,
+	
+	// Elder Roll ID
+	rollID:  2,
 };
+
+// Connect to Keplr and get client
+
+const { elderAddress, elderClient, elderPublicKey } = await  cosmos_getElderClient(elderChainConfig);
+const  ethAddress  =  getEthereumAddressFromCosmosCompressedPubKey(elderPublicKey);
+  
+// Example transaction data
+const  tx = await  DUMMY_CONTRACT.METHOD.populateTransaction();
+
+// Create and sign transaction
+const { tx_hash, rawTx } = await  cosmos_getElderMsgAndFeeTxRaw(
+    tx,
+    elderAddress,
+    elderPublicKey,
+    21000, // gasLimit
+    ethers.parseEther("1.0"),
+    1234, // rollChainId
+    2, // ElderRollID
+    "elder-testnet"  // chainName
+);
+
+// Broadcast transaction using the client
+// broadcastResult.code == 0 ( for tx success )
+
+const  broadcastResult = await  elderClient.broadcastTx(rawTx);
+
+console.log("Transaction Hash:", tx_hash);
+console.log("Broadcast Result:", broadcastResult);
+
 ```
 
-This configuration is required when calling `getElderClient`.
+  
 
 ---
 
-## 📚 **Function Reference**
+  
 
-### 🔹 **getElderClient(elderChainConfig)**
-**Description**: Initializes a connection to a Rollapp via Keplr and returns an `elderAddress` and `elderClient`.
+## Project Structure
 
-**Parameters:**
-- `elderChainConfig` (object) — Contains `chainName`, `rpc`, and `rest` configuration.
+  
 
-**Returns:**
-- `{ elderAddress, elderClient }` — The connected wallet address and client instance.
-
-**Example:**
-```javascript
-const { elderAddress, elderClient } = await getElderClient(elderChainConfig);
 ```
 
----
+elderjs/
 
-### 🔹 **sendElderCustomTransaction(elderAddress, elderClient, elderMsg, elderFee)**
-**Description**: Sends a custom transaction to the Rollapp.
+├── eth_wallet/
 
-**Parameters:**
-- `elderAddress` (string) — The connected wallet address.
-- `elderClient` (object) — The Elder client instance.
-- `elderMsg` (object) — Custom message to be sent.
-- `elderFee` (object) — Custom fee information.
+│ └── index.js # Ethereum wallet utilities
 
-**Example:**
-```javascript
-await sendElderCustomTransaction(elderAddress, elderClient, elderMsg, elderFee);
+├── cosmos_wallet/
+
+│ └── index.js # Cosmos wallet utilities (Keplr integration)
+
+├── common/ # Shared utilities and helpers
+
+├── package.json # Project metadata and dependencies
+
+└── README.md # This file
+
 ```
 
+  
+
 ---
 
-### 🔹 **getElderMsgAndFee(tx, elderAddress, gasLimit, value, chainId, rollID)**
-**Description**: Prepares the custom transaction message and fee required for Elder Rollapp transactions.
+  
 
-**Parameters:**
-- `tx` (object) — Transaction details.
-- `elderAddress` (string) — The sender's address.
-- `gasLimit` (number) — The gas limit for the transaction.
-- `value` (string) — The transaction value.
-- `chainId` (number) — The chain ID.
-- `rollID` (string) — Roll ID for the transaction.
+## Dependencies
 
-**Returns:**
-- `{ elderMsg, elderFee }` — The message and fee for the transaction.
+  
 
-**Example:**
-```javascript
-const { elderMsg, elderFee } = getElderMsgAndFee(tx, elderAddress, 200000, ethers.utils.parseEther('0.01'), 1, 'roll-id-example');
+-  **`ethers`**: Ethereum JavaScript library for transaction handling.
+
+-  **`@cosmjs/stargate`**: Cosmos SDK client for transaction signing and broadcasting.
+
+-  **`@cosmjs/proto-signing`**: Protobuf-based signing utilities for Cosmos.
+
+-  **`bech32`**: Bech32 address encoding/decoding.
+
+-  **`@noble/hashes`**: Cryptographic hash functions.
+
+  
+
+See `package.json` for the full list.
+
+  
+
+---
+
+  
+
+## Development
+
+  
+
+### Transpile TypeScript
+
+  
+
+To transpile TypeScript files (if applicable):
+
+  
+
+```bash
+
+npm  run  transpile-ts
+
 ```
+  
+
+## Contributing
+
+  
+
+Contributions are welcome! Please follow these steps:
+
+  
+
+1. Fork the repository.
+
+2. Create a feature branch (`git checkout -b feature/your-feature`).
+
+3. Commit your changes (`git commit -m "Add your feature"`).
+
+4. Push to the branch (`git push origin feature/your-feature`).
+
+5. Open a pull request.
+
+  
 
 ---
 
-## 📋 **Dependencies**
+  
 
-- **[@cosmjs/proto-signing](https://www.npmjs.com/package/@cosmjs/proto-signing)** — Used for protobuf message signing.
-- **[@cosmjs/stargate](https://www.npmjs.com/package/@cosmjs/stargate)** — Provides Stargate client to connect to Elder's blockchain.
-- **[ethers](https://www.npmjs.com/package/ethers)** — Used to create and serialize Ethereum-like transactions.
-- **[typescript](https://www.npmjs.com/package/typescript)** — Required for TypeScript support.
-- **[@bufbuild/protobuf](https://www.npmjs.com/package/@bufbuild/protobuf)** — Protobuf support for transaction messages.
+## License
 
----
+  
 
-## 🐞 **Issues**
+This project is licensed under the ISC License. See the [LICENSE](LICENSE) file for details.
 
-If you encounter any issues, please report them via GitHub Issues:
-
-🔗 [Report an Issue](https://github.com/0xElder/elderjs/issues)
+  
 
 ---
 
-## 📜 **License**
+  
 
-This project is licensed under the **ISC License**.
+## Issues
+
+  
+
+Found a bug? Have a suggestion? Open an issue on the [GitHub Issues page](https://github.com/0xElder/elderjs/issues).
+
+  
 
 ---
 
-If you found **ElderJS** useful, feel free to ⭐️ the repository to support development.
+  
 
-🔗 [GitHub Repository](https://github.com/0xElder/elderjs)
+## Contact
+
+  
+
+For questions or support, reach out via the [GitHub repository](https://github.com/0xElder/elderjs).
+
+  
 
 ---
 
-If you'd like additional sections, such as examples, contributing guidelines, or advanced usage, let me know.
+  
+
+Happy coding with ElderJS! 🚀
