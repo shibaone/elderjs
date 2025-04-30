@@ -15,6 +15,9 @@ export type { OfflineDirectSigner, OfflineSigner } from "@cosmjs/proto-signing";
 export type { DeliverTxResponse } from "@cosmjs/stargate";
 export type { ElderConfig, ElderFee, ElderMessage } from "./common/types";
 
+// ethers v6 utils exports
+export { BigNumberish, parseEther, TransactionLike } from "ethers";
+
 export {
     // cosmos wallets
     cosmos_getElderClient,
