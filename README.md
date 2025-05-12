@@ -2,7 +2,7 @@
 
   
 
-![GitHub version](https://img.shields.io/badge/version-1.2.10-blue.svg)
+![GitHub version](https://img.shields.io/badge/version-1.2.11-blue.svg)
 
 ![License](https://img.shields.io/badge/license-ISC-green.svg)
 
