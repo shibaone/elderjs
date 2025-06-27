@@ -27,5 +27,6 @@ export {
 
     // common helpers
     getEthereumAddressFromCosmosCompressedPubKey,
-    hexToUint8Array,
+    hexToUint8Array
 };
+
