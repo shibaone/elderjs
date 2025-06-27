@@ -34,8 +34,18 @@ jobs:
 
       - name: Build the package
         run: npm run build
+        
+      - name: Prepare package for publishing
+        run: |
+          mkdir -p temp
+          cp -r dist temp/
+          cp package.json temp/
+          cp README.md temp/
+          
+      - name: Preview package contents
+        run: npm pack temp/ --dry-run
 
       - name: Publish to GitHub Packages
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm publish --access restricted
+        run: npm publish temp/ --access restricted
