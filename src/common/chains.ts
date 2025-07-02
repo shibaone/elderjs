@@ -233,9 +233,73 @@ const devnet4 = {
     features: ["ibc-go", "eth-address-gen", "eth-key-sign"],
 };
 
+const testnet1 = {
+    chainId: "elder_122018",
+    chainName: "elder",
+    rpc: "http://localhost:26657",
+    rest: "http://localhost:1317",
+    bip44: {
+        coinType: 60,
+    },
+    bech32Config: {
+        bech32PrefixAccAddr: "elder",
+        bech32PrefixAccPub: "elder" + "pub",
+        bech32PrefixValAddr: "elder" + "valoper",
+        bech32PrefixValPub: "elder" + "valoperpub",
+        bech32PrefixConsAddr: "elder" + "valcons",
+        bech32PrefixConsPub: "elder" + "valconspub",
+    },
+    currencies: [
+        {
+            coinDenom: "treat",
+            coinMinimalDenom: "utreat",
+            coinDecimals: 6,
+            coinGeckoId: "treat-token",
+        },
+        {
+            coinDenom: "shib",
+            coinMinimalDenom: "shib",
+            coinDecimals: 1,
+            coinGeckoId: "shib-token",
+        },
+    ],
+    feeCurrencies: [
+        {
+            coinDenom: "treat",
+            coinMinimalDenom: "utreat",
+            coinDecimals: 6,
+            coinGeckoId: "treat-token",
+            gasPriceStep: {
+                low: 1,
+                average: 1.25,
+                high: 1.5,
+            },
+        },
+        {
+            coinDenom: "shib",
+            coinMinimalDenom: "shib",
+            coinDecimals: 1,
+            coinGeckoId: "shib-token",
+            gasPriceStep: {
+                low: 0.5,
+                average: 1,
+                high: 1.5,
+            },
+        },
+    ],
+    stakeCurrency: {
+        coinDenom: "treat",
+        coinMinimalDenom: "utreat",
+        coinDecimals: 6,
+        coinGeckoId: "treat-token",
+    },
+    features: ["ibc-go", "eth-address-gen", "eth-key-sign"],
+};
+
 export const chainMap = new Map([
     ['devnet-1', devnet1],
     ['devnet-2', devnet2],
     ['devnet-3', devnet3],
     ['devnet-4', devnet4],
+    ['testnet-1', testnet1]
 ]);

@@ -1,6 +1,6 @@
 {
   "name": "elderjs",
-  "version": "1.2.12",
+  "version": "1.2.13",
   "description": "JS lib to enable frontend for Rollapps connected to Elder Ecosystem",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
