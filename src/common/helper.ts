@@ -22,7 +22,7 @@ const COSMOS_WALLET_ID = 1;
 const ETH_WALLET_ID = 2;
 
 const defaultElderFee: ElderFee = {
-    amount: coins(2000000, "uelder"), // Adjust fee and denom
+    amount: coins(2000000, "utreat"), // Adjust fee and denom
     gas: 2000000, // Adjust gas
 };
 
