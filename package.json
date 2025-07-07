@@ -1,16 +1,19 @@
 {
     "name": "@shibaone/elderjs",
     "version": "1.2.13",
-    "description": "JS lib to enable frontend for Rollapps connected to Elder Ecosystem",
+    "description": "JS lib to enable frontend for Rollapps connected to Shib Alpha Layer",
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
     "types": "./dist/index.d.ts",
+    "publishConfig": {
+      "registry": "https://npm.pkg.github.com/"
+    },
     "scripts": {
         "build": "tsup src --format cjs,esm --dts"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/0xElder/elderjs.git"
+        "url": "git+https://github.com/shibaone/elderjs.git"
     },
     "author": "",
     "license": "ISC",
@@ -36,7 +39,10 @@
         "eslint-plugin-react": "^7.37.2",
         "globals": "^15.13.0",
         "tsup": "^8.4.0",
-        "typescript-eslint": "^8.17.0",
+        "typescript-eslint": "^8.17.0"
         "typescript": "^5.7.2"
+    },
+    "peerDependencies": {
+        "ethers": "^6.13.5"
     }
 }
