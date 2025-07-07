@@ -1,6 +1,6 @@
 {
     "name": "@shibaone/elderjs",
-    "version": "1.2.12",
+    "version": "1.2.13",
     "description": "JS lib to enable frontend for Rollapps connected to Shib Alpha Layer",
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
@@ -39,8 +39,8 @@
         "eslint-plugin-react": "^7.37.2",
         "globals": "^15.13.0",
         "tsup": "^8.4.0",
-        "typescript": "^5.7.2",
-        "typescript-eslint": "^8.17.0"
+        "typescript-eslint": "^8.17.0",
+        "typescript": "^5.7.2"
     },
     "peerDependencies": {
         "ethers": "^6.13.5"
